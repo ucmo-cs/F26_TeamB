@@ -1,0 +1,43 @@
+# ignore node_modules folder full of pakets
+/react-app/node_modules
+
+
+#Backend
+backend/HELP.md
+!backend/gradle/wrapper/gradle-wrapper.jar
+
+
+### STS ###
+backend/.apt_generated
+backend/.classpath
+backend/.factorypath
+backend/.project
+backend/.settings
+backend/.springBeans
+backend/.sts4-cache
+backend/bin/
+!backend/src/main/**/bin/
+!backend/src/test/**/bin/
+
+
+### IntelliJ IDEA ###
+backend/*.iws
+backend/*.iml
+backend/*.ipr
+backend/out/
+!backend/src/main/**/out/
+!backend/src/test/**/out/
+
+### NetBeans ###
+/backend/nbproject/private/
+/backend/nbbuild/
+/backend/dist/
+/backend/nbdist/
+/backend/.nb-gradle/
+
+### VS Code ###
+backend/.vscode/
+backend/.gradle/8.12.1/fileHashes/fileHashes.lock
+backend/.gradle/8.12.1/fileHashes/fileHashes.bin
+backend/.gradle/8.12.1/fileHashes/fileHashes.lock
+backend/build/reports/problems/problems-report.html

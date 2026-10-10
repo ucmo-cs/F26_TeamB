@@ -1,0 +1,33 @@
+$primary: #006747;   
+$secondary: #ece9e9; 
+$custom-blue: #007ea8;
+
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+$theme-colors: map-merge($theme-colors, (
+  "primary": $primary,
+  "secondary": $secondary,
+  "info": $custom-blue
+));
+
+@import "bootstrap/scss/bootstrap.scss";
+
+.btn-primary,
+.btn-outline-primary {
+  &:hover {
+    background-color: #000 !important;
+    border-color: #000 !important;
+    color: $secondary !important;
+  }
+}
+
+.btn-secondary,
+.btn-outline-secondary {
+  &:hover,
+  &:focus {
+    background-color: #000 !important;
+    border-color: #000 !important;
+    color: $secondary !important;
+  }
+}
