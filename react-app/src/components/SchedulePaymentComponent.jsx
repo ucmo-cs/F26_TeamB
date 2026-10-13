@@ -4,11 +4,17 @@ import { useContext, useState, useEffect } from 'react';
 
 export function SchedulePaymentComponent(){
     const {loanInfo, setLoanInfo, editMode, setEditMode} = useContext(CustomerLoanInfoContext);
+    const [editPaymentAmount, setEditPaymentAmount] = useState(false);
+    const [selectedPaymentAmount, setSelectedPaymentAmount] = useState('');
     const [selectedPaymentBy, setSelectedPaymentBy] = useState('');
     const [error, setError] = useState('');
 
     useEffect(() => {
-        if (loanInfo) setSelectedPaymentBy(loanInfo.scheduledPaymentBy ?? '');
+        if (loanInfo) {
+            setSelectedPaymentBy(loanInfo.scheduledPaymentBy ?? '-');
+            setSelectedPaymentAmount(loanInfo.scheduledPaymentAmount ?? '');
+        }
+        
     }, [loanInfo]);
 
     if (!loanInfo) return <Container className="my-4">Loading...</Container>;
@@ -55,6 +61,7 @@ export function SchedulePaymentComponent(){
                 <Col className='h2'>Scheduled Payment By</Col>
 
                 {editMode? 
+                <>
                 <Col>
                 <FormSelect value={selectedPaymentBy} onChange={(e) => setSelectedPaymentBy(e.target.value)}>
                     <option value="">Select payment frequency</option>
@@ -63,21 +70,37 @@ export function SchedulePaymentComponent(){
                     <option value="Weekly">Weekly</option>
                 </FormSelect>
                 </Col>
-                :
-                <Col className='h2 text-end'>{loanInfo? loanInfo.paymentFrequency : '-'}</Col>
-                }
-                
-                {editMode? 
-                    <Col className='text-end'>
+
+                <Col className='text-end'>
                         <Button variant="primary" onClick={handleSave}>Save</Button>
                         <Button className = "mx-3" variant="secondary" onClick={() => {setEditMode(false); setError("");}}>Cancel</Button>
-                    </Col>
-                :
-                    <Col className='text-end'>
+                </Col>
+                </>
+                : //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                <>
+                <Col className='h2 text-end'>{loanInfo? loanInfo.paymentFrequency : '-'}</Col>
+
+                <Col className='text-end'>
                         <Button variant="primary" onClick={() => setEditMode(true)}>Edit</Button>
-                    </Col>
+                </Col>
+                </>
                 }
             </Row>
+
+            <Row className='mb-4'>
+            <Col className='h2'>Scheduled Payment Amount</Col>
+            {editPaymentAmount? 
+            <>
+            
+            </>
+            :////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            <>
+            <Col className='h2 text-end'>$ {loanInfo? loanInfo.scheduledPaymentAmount : '-'}</Col>
+            </>
+
+            }
+            </Row>
+
             <Row className='mb-4'>
                 <Col className='h2'>Minimum Payment</Col>
                 <Col className='h2 text-end'>{loanInfo? loanInfo.minimumPayment : '-'}</Col>
