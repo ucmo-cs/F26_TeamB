@@ -1,10 +1,9 @@
 import { CustomerLoanInfoContext } from '../contexts/CustomerLoanInfoContext';
-import { Container, Button, Row, Col, FormSelect } from 'react-bootstrap';
+import { Container, Button, Row, Col, FormSelect , Form, InputGroup } from 'react-bootstrap';
 import { useContext, useState, useEffect } from 'react';
 
 export function SchedulePaymentComponent(){
     const {loanInfo, setLoanInfo, editMode, setEditMode} = useContext(CustomerLoanInfoContext);
-    const [editPaymentAmount, setEditPaymentAmount] = useState(false);
     const [selectedPaymentAmount, setSelectedPaymentAmount] = useState('');
     const [selectedPaymentBy, setSelectedPaymentBy] = useState('');
     const [error, setError] = useState('');
@@ -35,14 +34,13 @@ export function SchedulePaymentComponent(){
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                firstName: loanInfo.firstName,
-                lastName: loanInfo.lastName,
-                scheduledPaymentBy: selectedPaymentBy
+                scheduledPaymentBy: selectedPaymentBy,
+                scheduledPaymentAmount: selectedPaymentAmount
              })
         });
 
         if (response.ok) {
-            setLoanInfo({ ...loanInfo, scheduledPaymentBy: selectedPaymentBy });
+            setLoanInfo({ ...loanInfo, scheduledPaymentBy: selectedPaymentBy, scheduledPaymentAmount: selectedPaymentAmount });
             setEditMode(false);
         }else{
             setError("Failed to update scheduled payment");
@@ -64,38 +62,36 @@ export function SchedulePaymentComponent(){
                 <>
                 <Col>
                 <FormSelect value={selectedPaymentBy} onChange={(e) => setSelectedPaymentBy(e.target.value)}>
-                    <option value="">Select payment frequency</option>
                     <option value="Monthly">Monthly</option>
                     <option value="Bi-weekly">Bi-weekly</option>
                     <option value="Weekly">Weekly</option>
                 </FormSelect>
                 </Col>
-
-                <Col className='text-end'>
-                        <Button variant="primary" onClick={handleSave}>Save</Button>
-                        <Button className = "mx-3" variant="secondary" onClick={() => {setEditMode(false); setError("");}}>Cancel</Button>
-                </Col>
                 </>
                 : //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 <>
-                <Col className='h2 text-end'>{loanInfo? loanInfo.paymentFrequency : '-'}</Col>
-
-                <Col className='text-end'>
-                        <Button variant="primary" onClick={() => setEditMode(true)}>Edit</Button>
-                </Col>
+                <Col className='h2 text-end'>{loanInfo ? loanInfo.scheduledPaymentBy : '-'}</Col>
                 </>
                 }
             </Row>
 
             <Row className='mb-4'>
             <Col className='h2'>Scheduled Payment Amount</Col>
-            {editPaymentAmount? 
+
+
+            {editMode?
             <>
+            <Col>
+            <InputGroup className="mb-3">
+                <InputGroup.Text>$</InputGroup.Text>
+                <Form.Control aria-label="Amount must be greater than or equal to minimum payment" value={selectedPaymentAmount} onChange={(e) => setSelectedPaymentAmount(e.target.value)} />
+            </InputGroup>
             
+            </Col>
             </>
             :////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             <>
-            <Col className='h2 text-end'>$ {loanInfo? loanInfo.scheduledPaymentAmount : '-'}</Col>
+            <Col className='h2 text-end'>$ {loanInfo ? loanInfo.scheduledPaymentAmount : '-'}</Col>
             </>
 
             }
@@ -105,6 +101,18 @@ export function SchedulePaymentComponent(){
                 <Col className='h2'>Minimum Payment</Col>
                 <Col className='h2 text-end'>{loanInfo? loanInfo.minimumPayment : '-'}</Col>
             </Row>
+
+            {editMode?
+            <>
+            <Button variant="primary" onClick={handleSave}>Save</Button>
+            <Button className="mx-3" variant="secondary" onClick={() => {setEditMode(false); setError("");}}>Cancel</Button>
+            </>
+            :////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            <>
+            <Button variant="primary" onClick={() => setEditMode(true)}>Edit</Button>
+            </>
+            }
+
         </Container>
     )
 }
