@@ -10,7 +10,7 @@ export function SchedulePaymentComponent(){
 
     useEffect(() => {
         if (loanInfo) {
-            setSelectedPaymentBy(loanInfo.scheduledPaymentBy ?? '-');
+            setSelectedPaymentBy(loanInfo.paymentFrequency ?? '-');
             setSelectedPaymentAmount(loanInfo.scheduledPaymentAmount ?? '');
         }
         
