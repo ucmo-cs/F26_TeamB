@@ -34,14 +34,15 @@ export function SchedulePaymentComponent(){
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    scheduledPaymentBy: selectedPaymentBy,
+                    paymentFrequency: selectedPaymentBy,
                     scheduledPaymentAmount: selectedPaymentAmount
                 })
             });
 
         if (response.ok) {
-            setLoanInfo({ ...loanInfo, scheduledPaymentBy: selectedPaymentBy, scheduledPaymentAmount: selectedPaymentAmount });
+            setLoanInfo({ ...loanInfo, paymentFrequency: selectedPaymentBy, scheduledPaymentAmount: selectedPaymentAmount });
             setEditMode(false);
+            setError("");
         }else{
             setError("Failed to update scheduled payment");
         }} 
@@ -70,15 +71,34 @@ export function SchedulePaymentComponent(){
                 </>
                 : //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 <>
-                <Col className='h2 text-end'>{loanInfo ? loanInfo.scheduledPaymentBy : '-'}</Col>
+                <Col className='h2 text-end'>{loanInfo ? loanInfo.paymentFrequency : '-'}</Col>
                 </>
                 }
+            </Row>
+
+            <Row className='mb-4'>
+            <Col className='h2'>Scheduled Payment Amount</Col>
+            {editMode?
+                <>
+                <Col>
+                <InputGroup className="mb-3">
+                    <InputGroup.Text>$</InputGroup.Text>
+                    <Form.Control aria-label="Amount must be greater than or equal to minimum payment" value={selectedPaymentAmount} onChange={(e) => setSelectedPaymentAmount(e.target.value)} />
+                </InputGroup>
                 
+                </Col>
+                </>
+                :////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                <>
+                <Col className='h2 text-end'>$ {loanInfo ? loanInfo.scheduledPaymentAmount : '-'}</Col>
+                </>
+
+            }
             </Row>
 
             <Row className='mb-4'>
                 <Col className='h2'>Minimum Payment</Col>
-                <Col className='h2 text-end'>{loanInfo? loanInfo.minimumPayment : '-'}</Col>
+                <Col className='h2 text-end'>{loanInfo? `$ ${loanInfo.minimumScheduledPaymentAmount.toFixed(2)}` : '-'}</Col>
             </Row>
 
             {editMode?
