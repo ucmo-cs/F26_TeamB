@@ -34,35 +34,18 @@ export function SchedulePaymentComponent(){
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    firstName: loanInfo.firstName,
-                    lastName: loanInfo.lastName,
-                    paymentFrequency: selectedPaymentBy
+                    scheduledPaymentBy: selectedPaymentBy,
+                    scheduledPaymentAmount: selectedPaymentAmount
                 })
             });
-        const response = await fetch(editScheduledPaymentAPI, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                scheduledPaymentBy: selectedPaymentBy,
-                scheduledPaymentAmount: selectedPaymentAmount
-             })
-        });
 
-            if (response.ok) {
-                setLoanInfo({ ...loanInfo, paymentFrequency: selectedPaymentBy });
-                setEditMode(false);
-            }else{
-                setError("Failed to update scheduled payment");
-            }
         if (response.ok) {
             setLoanInfo({ ...loanInfo, scheduledPaymentBy: selectedPaymentBy, scheduledPaymentAmount: selectedPaymentAmount });
             setEditMode(false);
         }else{
             setError("Failed to update scheduled payment");
-        }
-        } catch (error) {
+        }} 
+        catch (error) {
             setError("An error occurred while updating scheduled payment");
             console.error(error);
         }
@@ -75,17 +58,6 @@ export function SchedulePaymentComponent(){
             <Row className = 'mb-4'>
                 <Col className='h2'>Scheduled Payment By</Col>
 
-                {editMode?
-                    <Col>
-                        <FormSelect value={selectedPaymentBy} onChange={(e) => setSelectedPaymentBy(e.target.value)}>
-                            <option value="">Select payment frequency</option>
-                            <option value="Monthly">Monthly</option>
-                            <option value="Bi-weekly">Bi-weekly</option>
-                            <option value="Weekly">Weekly</option>
-                        </FormSelect>
-                    </Col>
-                    :
-                    <Col className='h2 text-end'>{loanInfo? loanInfo.paymentFrequency : '-'}</Col>
                 {editMode? 
                 <>
                 <Col>
@@ -101,39 +73,7 @@ export function SchedulePaymentComponent(){
                 <Col className='h2 text-end'>{loanInfo ? loanInfo.scheduledPaymentBy : '-'}</Col>
                 </>
                 }
-
-                {editMode?
-                    <Col className='text-end'>
-                        <Button variant="primary" onClick={handleSave}>Save</Button>
-                        <Button className = "mx-3" variant="secondary" onClick={() => {setEditMode(false); setError("");}}>Cancel</Button>
-                    </Col>
-                    :
-                    <Col className='text-end'>
-                        <Button variant="primary" onClick={() => setEditMode(true)}>Edit</Button>
-                    </Col>
-                }
-            </Row>
-
-            <Row className='mb-4'>
-            <Col className='h2'>Scheduled Payment Amount</Col>
-
-
-            {editMode?
-            <>
-            <Col>
-            <InputGroup className="mb-3">
-                <InputGroup.Text>$</InputGroup.Text>
-                <Form.Control aria-label="Amount must be greater than or equal to minimum payment" value={selectedPaymentAmount} onChange={(e) => setSelectedPaymentAmount(e.target.value)} />
-            </InputGroup>
-            
-            </Col>
-            </>
-            :////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            <>
-            <Col className='h2 text-end'>$ {loanInfo ? loanInfo.scheduledPaymentAmount : '-'}</Col>
-            </>
-
-            }
+                
             </Row>
 
             <Row className='mb-4'>
