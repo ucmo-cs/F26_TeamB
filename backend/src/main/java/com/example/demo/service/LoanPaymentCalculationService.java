@@ -32,6 +32,7 @@ public class LoanPaymentCalculationService {
         // Amoritization formula (partial). 1 Problem. It is not setup for years. Instead of recurring it needs to be total number of payments.
         double periodicInterest = interest / recurring; // This adjusts interest so that payment amount is geared for 1 year.
         paymentAmount = (long) Math.ceil(remainingBalance * ((periodicInterest * Math.pow(1 + periodicInterest, totalPayments)) / (Math.pow(1 + periodicInterest, totalPayments) - 1)));
+        loan.setMinimumScheduledPaymentAmount(paymentAmount);
 
         if (paymentAmount > loan.getScheduledPaymentAmount()){
             loan.setScheduledPaymentAmount(paymentAmount);

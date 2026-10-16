@@ -41,6 +41,10 @@ public class LoanService {
         if (loan.getRemainingBalance() == null) {
             loan.setRemainingBalance(loan.getOriginalAmount() - loan.getStartingPayment()); // If loan starting payment is above 0 it should be deducted from current loan
         }
+        if (loan.getPaymentFrequency() != null){
+            loanPaymentCalculationService.calculatePayoffDateAndTotal(loan, loan.getPaymentFrequency());
+        }
+
 
         return loanRepository.save(loan);
     }
@@ -60,10 +64,16 @@ public class LoanService {
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        if (updates.getScheduledPaymentAmount() != null) {
-            loanPaymentCalculationService.calculatePayoffDateAndTotal(loan, loan.getPaymentFrequency()); // If months were to be zero it would cause bugs
-            // Scheduled Payment Amount set in LoanPaymentCalcService
+        loan.setPaymentFrequency(updates.getPaymentFrequency());
+        if (loan.getMonthsToEndDate() == 0){
+            loan.setMonthsToEndDate(12);
         }
+
+        if (loan.getScheduledPaymentAmount() != null){
+            loanPaymentCalculationService.calculatePayoffDateAndTotal(loan, loan.getPaymentFrequency());
+        }
+        // Scheduled Payment Amount set in LoanPaymentCalcService
+
         return loanRepository.save(loan);
     }
 }

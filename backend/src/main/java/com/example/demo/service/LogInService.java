@@ -43,7 +43,7 @@ public class LogInService {
 				firstName.substring(0, 1).toLowerCase(Locale.ROOT)
 						+ lastName.toLowerCase(Locale.ROOT)
 						+ customer.getId());
-		credentials.setPassword(generatePassword());
+		credentials.setPassword(generatePassword(customer));
 		credentials.setRole("customer");
 		credentials.setCustomerId(customer.getId());
 		return logInRepository.save(credentials);
@@ -54,11 +54,22 @@ public class LogInService {
 		return logInRepository.findByUserNameAndPassword(userName, password);
 	}
 
+	private String generatePassword(Customer customer) {
+		char firstName = customer.getFirstName().charAt(0);
+		char lastName = customer.getLastName().charAt(0);
+		long id = customer.getId();
+
+		return "" + firstName + lastName + id + "00";
+	}
+	/*
+
 	private String generatePassword() {
 		char[] password = new char[12];
 		password[0] = LETTERS.charAt(RANDOM.nextInt(LETTERS.length()));
 		password[1] = NUMBERS.charAt(RANDOM.nextInt(NUMBERS.length()));
 		password[2] = SPECIAL_CHARACTERS.charAt(RANDOM.nextInt(SPECIAL_CHARACTERS.length()));
+
+
 
 		for (int i = 3; i < password.length; i++) {
 			password[i] = PASSWORD_CHARACTERS.charAt(RANDOM.nextInt(PASSWORD_CHARACTERS.length()));
@@ -73,4 +84,5 @@ public class LogInService {
 
 		return new String(password);
 	}
+	 */
 }

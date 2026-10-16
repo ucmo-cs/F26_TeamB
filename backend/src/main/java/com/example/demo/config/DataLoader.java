@@ -34,7 +34,7 @@ public class DataLoader implements CommandLineRunner{
 		loginRepo.save(customer);
 		myCustomer = customerRepo.save(myCustomer);
 
-		Loan loan = new Loan(null, "John", "Smith", "johnsmith@example.com","123-456-7890" ,LocalDate.parse("2023-01-01"), LocalDate.parse("2024-01-01"), 12, 10000, 5000L, 500L, 500L, 0.05, 10500,"Monthly", myCustomer.getId());
+		Loan loan = new Loan(null, "John", "Smith", "johnsmith@example.com","123-456-7890" ,LocalDate.parse("2023-01-01"), LocalDate.parse("2024-01-01"), 12, 10000, 5000L, 500L, 500L, 500L, 0.05, 10500,"Monthly", myCustomer.getId());
 		
 		loanRepo.save(loan);
 

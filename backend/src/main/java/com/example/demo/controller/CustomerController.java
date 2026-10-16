@@ -39,14 +39,4 @@ public class CustomerController {
     public List<Loan> getLoans(@PathVariable Long id) {
         return customerService.getLoansByCustomerId(id);
     }
-
-
-
-
-
-
-
-
-
-
 }

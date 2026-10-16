@@ -32,8 +32,9 @@ public class Loan {
     private long originalAmount;                // The original amount of money the loan was.
     private Long remainingBalance;              // amount still owed.
     private Long scheduledPaymentAmount;        // The amount you are paying per (Week/Biweekly/Monthly) (Amount you are paying per payment)
-    private long startingPayment;               // This is the amount paid off. For sake of having partially paid loans. Only needs to work for Postman.
+    private long minimumScheduledPaymentAmount; // This is the minimum
 
+    private long startingPayment;               // This is the amount paid off. For sake of having partially paid loans. Only needs to work for Postman.
     private Double interestRate = 0.05;  // annual rate (Pretend percent).
     private long totalAndInterest;      // Total amount you will have paid with plan.
 
