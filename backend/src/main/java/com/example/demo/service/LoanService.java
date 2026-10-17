@@ -68,6 +68,9 @@ public class LoanService {
         if (loan.getMonthsToEndDate() == 0){
             loan.setMonthsToEndDate(12);
         }
+        if (updates.getScheduledPaymentAmount() != null) {
+            loan.setScheduledPaymentAmount(updates.getScheduledPaymentAmount());
+        }
 
         if (loan.getScheduledPaymentAmount() != null){
             loanPaymentCalculationService.calculatePayoffDateAndTotal(loan, loan.getPaymentFrequency());
