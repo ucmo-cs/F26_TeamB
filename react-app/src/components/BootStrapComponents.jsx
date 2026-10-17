@@ -79,29 +79,44 @@ function LoginComponent(){
   
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Container className="mt-3">
-        {error && (
-        <Alert variant='danger'>
-          <p>{error}</p>
-        </Alert>)}
+      <div className="container d-flex align-items-center min-vh-100">
+        <div className="row justify-content-center w-100">
+          <div className="col-12 col-md-8 col-lg-5 col-xl-5">
+  
+            <Form onSubmit={handleSubmit} className="card border-0 shadow rounded-4 p-4 p-md-5">
+  
+              <div className="text-center mb-4">
+                <h2 className="fw-bold mb-1">Log in</h2>
+                <p className="text-body-secondary mb-0">Sign in to manage your accounts and loans.</p>
+              </div>
+  
+              {error && (
+              <Alert variant='danger' className="py-2 mb-4" role="alert">
+                <p className="mb-0 small">{error}</p>
+              </Alert>)}
+  
+              <Form.Group className="mb-3" controlId="formUsername">
+                <Form.Label className="fw-semibold small">Username</Form.Label>
+                <Form.Control size="lg" type="text" placeholder="Enter username" autoComplete="username" value={userName} onChange={(e) => setUsername(e.target.value)}/>
+              </Form.Group>
+  
+              <Form.Group className="mb-4" controlId="formBasicPassword">
+                <Form.Label className="fw-semibold small">Password</Form.Label>
+                <Form.Control size="lg" type="password" placeholder="Password" autoComplete="current-password" value = {password} onChange={(e) => setPassword(e.target.value)}/>
+              </Form.Group>
+  
+              <div className="d-grid">
+                <Button variant="primary" size="lg" type="submit" className="fw-semibold">
+                  Log in
+                </Button>
+              </div>
+  
+            </Form>
+  
+          </div>
+        </div>
+      </div>
 
-        <Form.Group className="mb-3" controlId="formUsername">
-          <Form.Label>Username</Form.Label>
-          <Form.Control type="text" placeholder="Enter username" value={userName} onChange={(e) => setUsername(e.target.value)}/>
-        </Form.Group>
-
-        <Form.Group className="mb-3" controlId="formBasicPassword">
-          <Form.Label>Password</Form.Label>
-          <Form.Control type="password" placeholder="Password" value = {password} onChange={(e) => setPassword(e.target.value)}/>
-        </Form.Group>
-
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
-
-      </Container>
-    </Form>
   )
 }
 

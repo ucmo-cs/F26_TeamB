@@ -25,7 +25,7 @@ export function LoanComponent(){
         <Container className="my-5 bg-secondary rounded">
             <Row className = 'mb-4'>
                 <Col className='h2'>Amount Owed</Col>
-                <Col className='h2 text-end'>$ {customerLoanInfo? customerLoanInfo.remainingBalance : '-'}</Col>
+                <Col className='h2 text-end'> {customerLoanInfo? customerLoanInfo.remainingBalance.toLocaleString('en-US', {style: 'currency', currency: 'USD',}) : '-'}</Col>
             </Row>
             <Row>
                 <Col className='h5'>Date Taken Out</Col>
@@ -33,7 +33,7 @@ export function LoanComponent(){
             </Row>
             <Row>
                 <Col className='h5'>Original Amount</Col>
-                <Col className='h5 text-end'>${customerLoanInfo? customerLoanInfo.originalAmount : '-'}</Col>
+                <Col className='h5 text-end'>{customerLoanInfo? customerLoanInfo.originalAmount.toLocaleString('en-US', {style: 'currency', currency: 'USD',}) : '-'}</Col>
             </Row>
             <Row>
                 <Col className='h5'>Interest Rate</Col>
@@ -41,11 +41,11 @@ export function LoanComponent(){
             </Row>
             <Row>
                 <Col className='h5'>Calculated pay-off Date</Col>
-                <Col className='h5 text-end'>{customerLoanInfo? customerLoanInfo.calculatedPayoffDate : '-'}</Col>
+                <Col className='h5 text-end'>{customerLoanInfo? customerLoanInfo.loanEndDate : '-'}</Col>
             </Row>
             <Row>
                 <Col className='h5'>Minimum monthly payment</Col>
-                <Col className='h5 text-end'>{customerLoanInfo? customerLoanInfo.minimumMonthlyPayment : '-'}</Col>
+                <Col className='h5 text-end'>{customerLoanInfo? customerLoanInfo.minimumScheduledPaymentAmount.toLocaleString('en-US', {style: 'currency', currency: 'USD',}) : '-'}</Col>
             </Row>
         </Container>
     )

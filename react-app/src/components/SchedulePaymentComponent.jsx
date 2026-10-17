@@ -40,7 +40,7 @@ export function SchedulePaymentComponent(){
             });
 
         if (response.ok) {
-            setLoanInfo({ ...loanInfo, paymentFrequency: selectedPaymentBy, scheduledPaymentAmount: selectedPaymentAmount });
+            setLoanInfo({ ...loanInfo, paymentFrequency: selectedPaymentBy, scheduledPaymentAmount: Number(selectedPaymentAmount) });
             setEditMode(false);
             setError("");
         }else{
@@ -90,7 +90,7 @@ export function SchedulePaymentComponent(){
                 </>
                 :////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 <>
-                <Col className='h2 text-end'>$ {loanInfo ? loanInfo.scheduledPaymentAmount : '-'}</Col>
+                <Col className='h2 text-end'>{loanInfo ? loanInfo.scheduledPaymentAmount.toLocaleString('en-US', {style: 'currency', currency: 'USD',}) : '-'}</Col>
                 </>
 
             }
@@ -98,7 +98,7 @@ export function SchedulePaymentComponent(){
 
             <Row className='mb-4'>
                 <Col className='h2'>Minimum Payment</Col>
-                <Col className='h2 text-end'>{loanInfo? `$ ${loanInfo.minimumScheduledPaymentAmount.toFixed(2)}` : '-'}</Col>
+                <Col className='h2 text-end'>{loanInfo? loanInfo.minimumScheduledPaymentAmount.toLocaleString('en-US', {style: 'currency', currency: 'USD',}) : '-'}</Col>
             </Row>
 
             {editMode?
