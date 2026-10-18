@@ -87,7 +87,7 @@ function LoginComponent(){
   
               <div className="text-center mb-4">
                 <h2 className="fw-bold mb-1">Log in</h2>
-                <p className="text-body-secondary mb-0">Sign in to manage your accounts and loans.</p>
+                <p className="text-body-secondary mb-0">Sign in to manage your loans.</p>
               </div>
   
               {error && (
