@@ -91,7 +91,7 @@ export function SchedulePaymentComponent(){
                 </>
                 :////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 <>
-                <Col className='h2 text-end'>{loanInfo ? loanInfo.scheduledPaymentAmount.toLocaleString('en-US', {style: 'currency', currency: 'USD',}) : '-'}</Col>
+                <Col className='h2 text-end'>{loanInfo.scheduledPaymentAmount?.toLocaleString('en-US', {style: 'currency', currency: 'USD',}) ?? '-'}</Col>
                 </>
 
             }
@@ -99,7 +99,7 @@ export function SchedulePaymentComponent(){
 
             <Row className='mb-4'>
                 <Col className='h2'>Minimum Payment</Col>
-                <Col className='h2 text-end'>{loanInfo? loanInfo.minimumScheduledPaymentAmount.toLocaleString('en-US', {style: 'currency', currency: 'USD',}) : '-'}</Col>
+                <Col className='h2 text-end'>{loanInfo.minimumScheduledPaymentAmount?.toLocaleString('en-US', {style: 'currency', currency: 'USD',}) ?? '-'}</Col>
             </Row>
 
             {editMode?

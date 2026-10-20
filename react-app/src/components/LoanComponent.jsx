@@ -37,7 +37,7 @@ export function LoanComponent(){
             </Row>
             <Row>
                 <Col className='h5'>Interest Rate</Col>
-                <Col className='h5 text-end'>{customerLoanInfo? customerLoanInfo.interestRate * 100 : '-'} %</Col>
+                <Col className='h5 text-end'>{customerLoanInfo? customerLoanInfo.interestRate : '-'} %</Col>
             </Row>
             <Row>
                 <Col className='h5'>Calculated pay-off Date</Col>
