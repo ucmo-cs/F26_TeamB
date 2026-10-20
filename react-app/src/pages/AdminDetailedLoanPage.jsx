@@ -87,7 +87,7 @@ export default function AdminDetailedLoanPage() {
                     <p>Bank Name: {loanDetails.customer.bankName}</p>
                     <p>Bank Account Number: {loanDetails.customer.bankAccountNumber}</p>
                     <p>Bank Routing Number: {loanDetails.customer.bankRoutingNumber}</p>
-                    <p>Scheduled Payments: {loanDetails.scheduledPaymentAmount}</p>
+                    <p>Scheduled Payment Amount: {loanDetails.scheduledPaymentAmount}</p>
                     {loanDetails.loanEndDate && <p>Calculated Pay-off Date: {loanDetails.loanEndDate}</p>}
                 </div>
             );
