@@ -40,7 +40,8 @@ export function SchedulePaymentComponent(){
             });
 
         if (response.ok) {
-            setLoanInfo({ ...loanInfo, paymentFrequency: selectedPaymentBy, scheduledPaymentAmount: Number(selectedPaymentAmount) });
+            const updatedLoanInfo = await response.json();
+            setLoanInfo(updatedLoanInfo);
             setEditMode(false);
             setError("");
         }else{
