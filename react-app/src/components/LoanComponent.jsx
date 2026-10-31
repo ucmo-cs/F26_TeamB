@@ -1,7 +1,7 @@
 import '../Custom.scss'
 import '../App.css'
-import { Card, ListGroup, ProgressBar, Container  } from 'react-bootstrap'; 
-import { useContext } from 'react';
+import { Card, ListGroup, ProgressBar, Container, Row, Col, Button, Collapse } from 'react-bootstrap';
+import { useContext, useState } from 'react';
 import { CustomerLoanInfoContext } from '../contexts/CustomerLoanInfoContext';
 
 /*
@@ -32,7 +32,7 @@ function DetailRow({ label, value }) {
 
 export function LoanComponent() {
     const { customerLoanInfo } = useContext(CustomerLoanInfoContext);
-
+    const [openDetails, setOpenDetails] = useState(false);
     const paidPercent = customerLoanInfo
         ? Math.round(
               ((customerLoanInfo.originalAmount - customerLoanInfo.remainingBalance) /
@@ -54,12 +54,39 @@ export function LoanComponent() {
                         now={paidPercent}
                         variant="success"
                         className="mt-3"
-                        style={{ height: '8px' }}
+                        style={{ height: '20px' }}
                         aria-label="Loan paid off"
                     />
-                    <div className="text-muted small mt-1">{paidPercent}% paid off</div>
+                    <Row className="mb-3">
+                        <Col xs={6}>
+                            <span className="text-muted small me-2">Paid Off:</span>
+                            <span className="fw-semibold">
+                                {customerLoanInfo ? toCurrency(customerLoanInfo.originalAmount - customerLoanInfo.remainingBalance) : '-'}
+                            </span>
+                        </Col>
+                        <Col xs={6}>
+                            <div className="text-end">
+                            <span className="text-muted small me-2 text">Remaining:</span>
+                            <span className="fw-semibold">
+                                {customerLoanInfo ? toCurrency(customerLoanInfo.remainingBalance) : '-'}
+                            </span>
+                            </div>
+                        </Col>
+                    </Row>
                 </div>
 
+                <Button
+                    variant="link"
+                    className="p-0 text-decoration-none"
+                    onClick={() => setOpenDetails(!openDetails)}
+                    aria-controls="loan-details"
+                    aria-expanded={openDetails}
+                >
+                    {openDetails ? 'Hide details ▲' : 'Show details ▼'}
+                </Button>
+
+
+                <Collapse in={openDetails}>
                 <ListGroup variant="flush">
                     <DetailRow
                         label="Date Taken Out"
@@ -82,6 +109,7 @@ export function LoanComponent() {
                         value={customerLoanInfo ? toCurrency(customerLoanInfo.minimumScheduledPaymentAmount) : '-'}
                     />
                 </ListGroup>
+                </Collapse>
             </Card.Body>
         </Card>
         </Container>
