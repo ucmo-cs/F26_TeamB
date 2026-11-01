@@ -1,10 +1,11 @@
 import '../Custom.scss'
 import '../App.css'
 import { Container, Row, Col, Card, ListGroup, Button } from 'react-bootstrap'; 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { CustomerInfoContext } from '../contexts/CustomerInfoContext'; 
 import { CustomerLoanInfoContext } from '../contexts/CustomerLoanInfoContext';
 import { CustomerInfoModal } from './CustomerInfoModal';
+import { CustomerPaymentModal } from './CustomerPaymentModal';
 
 /*
 Requirments: 
@@ -52,21 +53,12 @@ const getInitials = (customerInfo) => {
     return (first + last).toUpperCase() || '?';
 };
  
-const maskAccountNumber = (accountNumber) =>
-    accountNumber ? `•••• ${String(accountNumber).slice(-4)}` : null;
- 
 export function CustomerInfoComponent() {
  
     const { customerInfo } = useContext(CustomerInfoContext);
     const { customerLoanInfo } = useContext(CustomerLoanInfoContext);
     const [editCustomerInfo, setEditCustomerInfo] = useState(false);
-    const [showAccountNumber, setShowAccountNumber] = useState(false);
- 
-    // Keep localStorage in sync after render instead of during it
-    useEffect(() => {
-        localStorage.setItem('customerInfo', JSON.stringify(customerInfo));
-        localStorage.setItem('customerLoanInfo', JSON.stringify(customerLoanInfo));
-    }, [customerInfo, customerLoanInfo]);
+    const [editCustomerPaymentInfo, setEditCustomerPaymentInfo] = useState(false);
  
     const fullName = customerInfo
         ? `${customerInfo.firstName ?? ''} ${customerInfo.lastName ?? ''}`.trim()
@@ -117,35 +109,13 @@ export function CustomerInfoComponent() {
                             <SectionHeader
                                 title="Payment information"
                                 subtitle=""
-                                onEdit={() => setEditCustomerInfo(true)}
+                                onEdit={() => setEditCustomerPaymentInfo(true)}
                             />
  
                             <ListGroup variant="flush">
                                 <InfoRow label="Bank nickname" value={customerInfo?.bankName} />
                                 <InfoRow label="Routing number" value={customerInfo?.bankRoutingNumber} />
-                                <InfoRow
-                                    label="Account number"
-                                    value={customerInfo?.bankAccountNumber}
-                                >
-                                    {customerInfo?.bankAccountNumber && (
-                                        <>
-                                            <span className="fw-semibold me-2">
-                                                {showAccountNumber
-                                                    ? customerInfo.bankAccountNumber
-                                                    : maskAccountNumber(customerInfo.bankAccountNumber)}
-                                            </span>
-                                            <Button
-                                                variant="link"
-                                                size="sm"
-                                                className="p-0 text-decoration-none"
-                                                onClick={() => setShowAccountNumber(!showAccountNumber)}
-                                                aria-pressed={showAccountNumber}
-                                            >
-                                                {showAccountNumber ? 'Hide' : 'Show'}
-                                            </Button>
-                                        </>
-                                    )}
-                                </InfoRow>
+                                <InfoRow label="Account number" value={customerInfo?.bankAccountNumber} />
                                 <InfoRow
                                     label="Calculated pay-off date"
                                     value={customerLoanInfo?.loanEndDate}
@@ -157,6 +127,7 @@ export function CustomerInfoComponent() {
             </Row>
  
             <CustomerInfoModal isEditable={editCustomerInfo} switchEditMode={setEditCustomerInfo} />
+            <CustomerPaymentModal isEditable={editCustomerPaymentInfo} switchEditMode={setEditCustomerPaymentInfo} />
         </Container>
     );
 }

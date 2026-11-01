@@ -14,7 +14,7 @@ export function CustomerInfoModal({isEditable, switchEditMode}){
             const response = await fetch(`http://localhost:8081/api/customer/${customerInfo.id}`, { 
                 method: 'PATCH',                                           
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({ ...customerInfo, ...formData }),
             });
             if (!response.ok) throw new Error('Failed to save your changes.');
             setCustomerInfo((prev) => ({ ...prev, ...formData }));
@@ -50,18 +50,6 @@ export function CustomerInfoModal({isEditable, switchEditMode}){
                     <Form.Group className="mb-3" controlId="formPhoneNumber">
                         <Form.Label>Phone Number</Form.Label>
                         <Form.Control type="text" name="phoneNumber" defaultValue={customerInfo? customerInfo.phoneNumber : ''} required />
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="formPaymentNickname">
-                        <Form.Label>Bank Name</Form.Label>
-                        <Form.Control type="text" name="bankName" defaultValue={customerInfo? customerInfo.bankName : ''} required/>
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="formRoutingNumber">
-                        <Form.Label>Bank Routing Number</Form.Label>
-                        <Form.Control type="text" name="bankRoutingNumber" defaultValue={customerInfo? customerInfo.bankRoutingNumber : ''} required/>
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="formAccountNumber">
-                        <Form.Label>Bank Account Number</Form.Label>
-                        <Form.Control type="text" name="bankAccountNumber" defaultValue={customerInfo? customerInfo.bankAccountNumber : ''} required/>
                     </Form.Group>
                 </Form>
             </Modal.Body>
