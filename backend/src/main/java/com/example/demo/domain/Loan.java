@@ -27,7 +27,7 @@ public class Loan {
 
     private LocalDate loanDate;                 // date the loan was taken out
     private LocalDate loanEndDate;              // Date at which loan is completely paid off
-    private int monthsToEndDate;                // Hello
+    private int monthsToEndDate = 12;                // Hello
 
     private long originalAmount;                // The original amount of money the loan was.
     private Long remainingBalance;              // amount still owed.
@@ -35,7 +35,7 @@ public class Loan {
     private long minimumScheduledPaymentAmount; // This is the minimum
 
     private long startingPayment;               // This is the amount paid off. For sake of having partially paid loans. Only needs to work for Postman.
-    private Double interestRate = 0.05;  // annual rate (Pretend percent).
+    private Double interestRate = 5.0;  // annual rate (Pretend percent).
     private long totalAndInterest;      // Total amount you will have paid with plan.
 
     private String paymentFrequency;

@@ -24,9 +24,10 @@ public class LoanPaymentCalculationService {
         Long remainingBalance = loan.getRemainingBalance();
         LocalDate currentDate = loan.getLoanDate();
         Long paymentAmount = loan.getScheduledPaymentAmount();
-        double interest = loan.getInterestRate();
+        double interest = loan.getInterestRate() / 100.0; // This fixes error where entering 0.05 was 5% and 5% was actually 500%
         LocalDate payoffDate = loan.getLoanEndDate();
         long totalPlusInterest = 0;
+        int paymentsMade = 0;
 
         int totalPayments = (int) Math.ceil(loan.getMonthsToEndDate() * recurring / 12.0);
         // Amoritization formula (partial). 1 Problem. It is not setup for years. Instead of recurring it needs to be total number of payments.
@@ -46,11 +47,11 @@ public class LoanPaymentCalculationService {
             if(remainingBalance <= 0){
                 totalPlusInterest += remainingBalance; // if remaining balance a negative remove from total amount paid since not paid
                 // Rounding has to be earlier Math.round(totalPlusInterest); // Round it so that it is a dollar.
-                loan.setLoanEndDate(currentDate); // Set loan end date to be the current date
+                loan.setLoanEndDate(loan.getLoanDate().plusMonths(paymentsMade * 12L / recurring).plusDays(Math.round(paymentsMade * 12L % recurring * 365.0 / 12 / recurring))); // Set loan end date to be the current date
                 loan.setTotalAndInterest(totalPlusInterest);
                 break;
             }
-
+            paymentsMade += 1;
             if (recurring == 12) {
                 currentDate = currentDate.plusMonths(1);
             } else if (recurring == 26) {
