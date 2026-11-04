@@ -2,6 +2,13 @@ import { CustomerLoanInfoContext } from '../contexts/CustomerLoanInfoContext';
 import { Container, Button, Row, Col, FormSelect , Form, InputGroup } from 'react-bootstrap';
 import { useContext, useState, useEffect } from 'react';
 
+/*
+TO DO:
+time line
+percentage graph
+show estimated pay off date
+*/
+
 export function SchedulePaymentComponent(){
     const {loanInfo, setLoanInfo, editMode, setEditMode} = useContext(CustomerLoanInfoContext);
     const [selectedPaymentAmount, setSelectedPaymentAmount] = useState('');
