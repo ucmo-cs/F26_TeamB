@@ -144,9 +144,15 @@ function LoanTable({ loans }) {
                     : loan.customerId ? "Customer not found" : "No customer associated"}
                 </Link>
               </td>
-              <td className="px-4 py-3">{loan.loanDate}</td>
-              <td className="px-4 py-3">{loan.originalAmount.toLocaleString({ style: 'currency', currency: 'USD' })}</td>
-              <td className="px-4 py-3">{loan.remainingBalance.toLocaleString({ style: 'currency', currency: 'USD' })}</td>
+
+              <td className="px-4 py-3">  
+                {(() => {
+                          if (!loan.loanDate) return '';
+                          const [year, month, day] = loan.loanDate.split('-');
+                          return `${month}/${day}/${year}`;
+                        })()}</td> {/* format for better readability  MM/DD/YYYY*/}
+              <td className="px-4 py-3">${loan.originalAmount.toLocaleString({ style: 'currency', currency: 'USD' })}</td>
+              <td className="px-4 py-3">${loan.remainingBalance.toLocaleString({ style: 'currency', currency: 'USD' })}</td>
               <td className="px-4 py-3">{loan.interestRate}%</td>
             </tr>
           ))}

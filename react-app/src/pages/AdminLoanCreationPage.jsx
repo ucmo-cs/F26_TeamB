@@ -55,7 +55,7 @@ export default function AdminLoanCreationPage() {
             <div className="card shadow-sm">
                 <div className="card-body p-4">
                 <form onSubmit={handleSubmit}>
-                    <h2 className="h6 text-uppercase text-secondary mb-3">Customer</h2>
+                    <h2 className="h6 text-uppercase text-black mb-3">Customer Information</h2>
 
                     <div className="row mb-3 align-items-center">
                     <label htmlFor="firstName" className="col-sm-4 col-form-label">First name</label>
@@ -86,13 +86,15 @@ export default function AdminLoanCreationPage() {
                     </div>
 
                     <hr className="my-4" />
-                    <h2 className="h6 text-uppercase text-secondary mb-3">Loan</h2>
+                    <h2 className="h6 text-uppercase font-weight-bold text-main mb-3">Loan Information</h2>
 
                     <div className="row mb-3 align-items-center">
-                    <label htmlFor="loanDate" className="col-sm-4 col-form-label">Loan date</label>
-                    <div className="col-sm-8">
-                        <input type="date" className="form-control" id="loanDate" name="loanDate" required />
-                    </div>
+                        <label htmlFor="loanDate" className="col-sm-4 col-form-label">Loan Orgin Date</label>
+                        <div className="col-sm-8 d-flex align-items-center">
+                            <input type="date" className="form-control" id="loanDate" name="loanDate" required />
+                            <button type="button" className="flex justify-content-center align-items-center btn btn-outline-black btn p-1 mt-1" 
+                                onClick={() => document.getElementById('loanDate').value = new Date().toISOString().split('T')[0]}>Today</button>
+                        </div>
                     </div>
 
                     <div className="row mb-3 align-items-center">

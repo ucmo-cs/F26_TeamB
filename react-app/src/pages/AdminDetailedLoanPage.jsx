@@ -65,31 +65,39 @@ export default function AdminDetailedLoanPage() {
 
 
         if (loading) {   
-            return <div className=" bg-light text-center content-center align-center">Loading...</div>;   
+            return <div className="text-center content-center align-center">Loading...</div>;   
         } 
         else if (error) { 
-            return <div className=" bg-light text-center content-center align-center">Error: {error}</div>;
+            return <div className="text-center content-center align-center">Error: {error}</div>;
         } 
         else if (!loanDetails || loanDetails.length === 0) {
-            return <div className=" bg-light text-center content-center align-center">No loan details found.</div>;
+            return <div className="text-center content-center align-center">No loan details found.</div>;
         } 
         else {
             return (
-                <div className=" bg-light text-center content-center align-center">
-                    <h1>Loan Details for Loan ID: {loanId}</h1>
-                    <p>Customer Name: {loanDetails.customerFirstName} {loanDetails.customerLastName}</p>
-                    <p>Loan Date: {loanDetails.loanDate}</p>
-                    <p>Amount Owed: {loanDetails.remainingBalance}</p>
-                    <p>Original Amount: {loanDetails.originalAmount}</p>
-                    <p>Interest Rate: {loanDetails.interestRate}</p>
-                    <p>Customer Email: {loanDetails.customerEmail}</p>
-                    <p>Customer Phone: {loanDetails.customer.phoneNumber}</p>
-                    <p>Bank Name: {loanDetails.customer.bankName}</p>
-                    <p>Bank Account Number: {loanDetails.customer.bankAccountNumber}</p>
-                    <p>Bank Routing Number: {loanDetails.customer.bankRoutingNumber}</p>
-                    <p>Scheduled Payment Amount: {loanDetails.scheduledPaymentAmount}</p>
-                    {loanDetails.loanEndDate && <p>Calculated Pay-off Date: {loanDetails.loanEndDate}</p>}
-                </div>
-            );
+                <div className="container py-5">
+                    <div className="card shadow-md row">
+                        <table className="table table-hover table-responsive p-4">
+                            <h1>Loan Details for Loan ID: {loanId}</h1>
+                            <p>Customer Name: {loanDetails.customerFirstName} {loanDetails.customerLastName}</p>
+                            <p>Loan Date: {(() => {
+                                if (!loanDetails.loanDate) return '';
+                                const [year, month, day] = loanDetails.loanDate.split('-');
+                                return `${month}/${day}/${year}`;
+                            })()}</p>
+                            <p>Amount Owed: {loanDetails.remainingBalance}</p>
+                            <p>Original Amount: {loanDetails.originalAmount}</p>
+                            <p>Interest Rate: {loanDetails.interestRate}</p>
+                            <p>Customer Email: {loanDetails.customerEmail}</p>
+                            <p>Customer Phone: {loanDetails.customer.phoneNumber}</p>
+                            <p>Bank Name: {loanDetails.customer.bankName}</p>
+                            <p>Bank Account Number: {loanDetails.customer.bankAccountNumber}</p>
+                            <p>Bank Routing Number: {loanDetails.customer.bankRoutingNumber}</p>
+                            <p>Scheduled Payment Amount: {loanDetails.scheduledPaymentAmount}</p>
+                            {loanDetails.loanEndDate && <p>Calculated Pay-off Date: {loanDetails.loanEndDate}</p>}
+                        </table>
+                    </div>
+                    </div>  
+            );  
         }
 };
