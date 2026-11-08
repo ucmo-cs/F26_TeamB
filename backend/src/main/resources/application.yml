@@ -21,3 +21,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: emailingservice89@gmail.com
+    password: wezq wxjj vroz vvgc
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

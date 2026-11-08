@@ -6,6 +6,7 @@ import com.example.demo.domain.Loan;
 import com.example.demo.repository.LoanRepository;
 import com.example.demo.domain.Customer;
 import com.example.demo.repository.CustomerRepository;
+import com.example.demo.service.EmailService;
 
 import java.time.LocalDate;
 
@@ -18,11 +19,13 @@ public class DataLoader implements CommandLineRunner{
 	private final LogInRepository loginRepo;
 	private final LoanRepository loanRepo;
 	private final CustomerRepository customerRepo;
+	private final EmailService emailService;
 
-	public DataLoader(LogInRepository logInRepository, LoanRepository loanRepository, CustomerRepository customerRepository){
+	public DataLoader(LogInRepository logInRepository, LoanRepository loanRepository, CustomerRepository customerRepository,  EmailService emailService) {
 		this.loginRepo = logInRepository;
 		this.loanRepo = loanRepository;
 		this.customerRepo = customerRepository;
+		this.emailService = emailService;
 	}
 
 	@Override
@@ -35,9 +38,10 @@ public class DataLoader implements CommandLineRunner{
 		myCustomer = customerRepo.save(myCustomer);
 
 		Loan loan = new Loan(null, "John", "Smith", "johnsmith@example.com","123-456-7890" ,LocalDate.parse("2023-01-01"), LocalDate.parse("2024-01-01"), 12, 10000, 5000L, 500L, 429L, 500L, 5.0, 10500,"Monthly", myCustomer.getId());
-		
 		loanRepo.save(loan);
 
+		// IMPORTANT: This will send an email to my account this is an example do not uncomment this. Use this as a templete to impliment it.
+		// emailService.sendEmail("omardiego636@gmail.com", "test email", "testing email 1234");
 
 	}
 }
