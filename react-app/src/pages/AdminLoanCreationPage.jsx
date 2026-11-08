@@ -10,8 +10,11 @@ TODO:
 
     • When the admin creates a new loan, a customer account should be automatically generated and the customer’s account information should be automatically emailed to the provided address. 
 */
-
+import { useState } from "react";
+import { VerticallyCenteredModal } from "../components/BootStrapComponents";
 export default function AdminLoanCreationPage() {
+    const [showSuccesModal, setShowSuccessModal] = useState(false);
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -20,7 +23,7 @@ export default function AdminLoanCreationPage() {
             customerFirstName: formData.get('firstName'),
             customerLastName: formData.get('lastName'),
             customerEmail: formData.get('email'),
-            customerPhoneNumber: formData.get('phoneNumber'),
+            customerPhoneNumber: `${formData.get('phoneNumberPt1')}-${formData.get('phoneNumberPt2')}-${formData.get('phoneNumberPt3')}`,
             loanDate: formData.get('loanDate'),
             originalAmount: Number(formData.get('originalAmount')),
             interestRate: Number(formData.get('interestRate')),
@@ -34,10 +37,10 @@ export default function AdminLoanCreationPage() {
                 body: JSON.stringify(loanData),
             });
             if (!response.ok) {
-            const body = await response.json().catch(() => null);
-            throw new Error(body?.message ?? `Request failed (${response.status})`);
+                const body = await response.json().catch(() => null);
+                throw new Error(body?.message ?? `Request failed (${response.status})`);
             }
-            alert('Loan created and email sent successfully!');
+            setShowSuccessModal(true);
         }
         catch (error) {
             console.error('Error creating loan:', error);
@@ -80,8 +83,12 @@ export default function AdminLoanCreationPage() {
 
                     <div className="row mb-4 align-items-center">
                     <label htmlFor="phoneNumber" className="col-sm-4 col-form-label">Phone number</label>
-                    <div className="col-sm-8">
-                        <input type="tel" className="form-control" id="phoneNumber" name="phoneNumber" required />
+                    <div className="col-sm-8 d-flex align-items-center">
+                        <input type="tel" className="form-control" id="phoneNumberPt1" name="phoneNumberPt1" min="3" max="3"required />
+                        <p className="align-self-center mb-0"> - </p>
+                        <input type="tel" className="form-control" id="phoneNumberPt2" name="phoneNumberPt2" min="3"max="3" required/>
+                        <p className="align-self-center mb-0"> - </p>
+                        <input type="tel" className="form-control" id="phoneNumberPt3" name="phoneNumberPt3" min="4" max="4" required/>
                     </div>
                     </div>
 
@@ -92,7 +99,7 @@ export default function AdminLoanCreationPage() {
                         <label htmlFor="loanDate" className="col-sm-4 col-form-label">Loan Orgin Date</label>
                         <div className="col-sm-8 d-flex align-items-center">
                             <input type="date" className="form-control" id="loanDate" name="loanDate" required />
-                            <button type="button" className="flex justify-content-center align-items-center btn btn-outline-black btn p-1 mt-1" 
+                            <button type="button" className="flex justify-content-center align-items-center btn btn-outline-black p-1 mt-1" 
                                 onClick={() => document.getElementById('loanDate').value = new Date().toISOString().split('T')[0]}>Today</button>
                         </div>
                     </div>
@@ -101,8 +108,8 @@ export default function AdminLoanCreationPage() {
                     <label htmlFor="originalAmount" className="col-sm-4 col-form-label">Original amount</label>
                     <div className="col-sm-8">
                         <div className="input-group">
-                        <span className="input-group-text">$</span>
-                        <input type="number" className="form-control" id="originalAmount" name="originalAmount" min="0" required />
+                            <span className="input-group-text">$</span>
+                            <input type="number" className="form-control" id="originalAmount" name="originalAmount" min="0" pattern="^\d+(\.\d{2})?$"required />
                         </div>
                     </div>
                     </div>
@@ -121,15 +128,24 @@ export default function AdminLoanCreationPage() {
                     <button type="submit" className="btn btn-primary btn-lg">
                         Create loan &amp; send email
                     </button>
+                    <button type="button" className="btn btn-outline-secondary text-black btn-lg mt-2" onClick={() => window.history.back()}>
+                        Cancel
+                    </button>
                     </div>
                 </form>
                 </div>
             </div>
 
-            <p className="small mt-3">
+            <p className="italic small mt-3">
                 Note: Upon creating a new loan, a customer account will be automatically generated and the
                 customer's account information will be emailed to the provided address.
             </p>
+            {showSuccesModal && (
+                <VerticallyCenteredModal
+                    show={showSuccesModal}
+                    onHide={() => {setShowSuccessModal(false); window.location.href = '/admin/';}}
+                />
+            )}
             </div>
         </div>
     );

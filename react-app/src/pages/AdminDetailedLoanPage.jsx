@@ -65,10 +65,15 @@ export default function AdminDetailedLoanPage() {
 
 
         if (loading) {   
-            return <div className="text-center content-center align-center">Loading...</div>;   
+            return <div className="text-center bg-black text-green-500">Loading...</div>;   
         } 
         else if (error) { 
-            return <div className="text-center content-center align-center">Error: {error}</div>;
+            return (
+                <div>
+                    <div className="text-center bg-red-500 text-white align-center"> Error: {error}</div>
+                    <div><button className="btn btn-primary" href="/admin/loans">back to the previous page</button></div>
+                </div>
+            );
         } 
         else if (!loanDetails || loanDetails.length === 0) {
             return <div className="text-center content-center align-center">No loan details found.</div>;
@@ -76,28 +81,71 @@ export default function AdminDetailedLoanPage() {
         else {
             return (
                 <div className="container py-5">
-                    <div className="card shadow-md row">
-                        <table className="table table-hover table-responsive p-4">
-                            <h1>Loan Details for Loan ID: {loanId}</h1>
-                            <p>Customer Name: {loanDetails.customerFirstName} {loanDetails.customerLastName}</p>
-                            <p>Loan Date: {(() => {
-                                if (!loanDetails.loanDate) return '';
-                                const [year, month, day] = loanDetails.loanDate.split('-');
-                                return `${month}/${day}/${year}`;
-                            })()}</p>
-                            <p>Amount Owed: {loanDetails.remainingBalance}</p>
-                            <p>Original Amount: {loanDetails.originalAmount}</p>
-                            <p>Interest Rate: {loanDetails.interestRate}</p>
-                            <p>Customer Email: {loanDetails.customerEmail}</p>
-                            <p>Customer Phone: {loanDetails.customer.phoneNumber}</p>
-                            <p>Bank Name: {loanDetails.customer.bankName}</p>
-                            <p>Bank Account Number: {loanDetails.customer.bankAccountNumber}</p>
-                            <p>Bank Routing Number: {loanDetails.customer.bankRoutingNumber}</p>
-                            <p>Scheduled Payment Amount: {loanDetails.scheduledPaymentAmount}</p>
-                            {loanDetails.loanEndDate && <p>Calculated Pay-off Date: {loanDetails.loanEndDate}</p>}
+                    <div className="table-responsive rounded border bg-light shadow-sm mt-4">
+                            <h3 className="px-4 py-3 text-nowrap"> Loan Details</h3>
+                            <table className="table table-hover table-responsive p-4">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" className="px-4 py-3 text-nowrap">Loan Origination Date</th>
+                                        <th scope="col" className="px-4 py-3 text-nowrap">Loan Principal Amount</th>
+                                        <th scope="col" className="px-4 py-3 text-nowrap">Interest Rate</th>
+                                        <th scope="col" className="px-4 py-3 text-nowrap">Remaining Balance</th>
+                                        <th scope="col" className="px-4 py-3 text-nowrap">Scheduled Payment Amount</th>
+                                        <th scope="col" className="px-4 py-3 text-nowrap">Calculated Pay-off Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>       
+                                        <td className=" text-center px-4 py-3">{(() => {
+                                            if (!loanDetails.loanDate) return '';
+                                            const [year, month, day] = loanDetails.loanDate.split('-');
+                                            return `${month}/${day}/${year}`;
+                                        })()}</td>
+                                        <td className="text-center px-4 py-3">{loanDetails.originalAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
+                                        <td className="text-center px-4 py-3">{loanDetails.interestRate.toFixed(2)}%</td>
+                                        <td className="text-center px-4 py-3">{loanDetails.remainingBalance.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
+
+                                        <td className="text-center px-4 py-3">{loanDetails.scheduledPaymentAmount? ((loanDetails.scheduledPaymentAmount).toLocaleString('en-US', { style: 'currency', currency: 'USD' })) : "N/A"}</td>
+                                        <td className="text-center px-4 py-3">{loanDetails.loanEndDate ? (() => {
+                                            if (!loanDetails.loanEndDate) return '';
+                                            const [year, month, day] = loanDetails.loanEndDate.split('-');
+                                            return `${month}/${day}/${year}`;
+                                        }
+                                        )() : 'N/A'}</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
-                    </div>  
+                    <div className="table-responsive rounded border bg-light shadow-sm">
+                        <h3 className="px-4 py-3 text-nowrap">Customer Details</h3>
+                        <table className="table  table-hover table-responsive p-4">
+                            <thead>
+                                <tr >
+                                    <th scope="col" className="px-4 py-3 text-nowrap">Customer Name</th>
+                                    <th scope="col" className="px-4 py-3 text-nowrap">Customer Email</th>
+                                    <th scope="col" className="px-4 py-3 text-nowrap">Customer Phone</th>
+                                    <th scope="col" className="px-4 py-3 text-nowrap">Bank Name</th>
+                                    <th scope="col" className="px-4 py-3 text-nowrap">Bank Account Number</th>
+                                    <th scope="col" className="px-4 py-3 text-nowrap">Bank Routing Number</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td className="text-center px-4 py-3">{loanDetails.customerFirstName} {loanDetails.customerLastName}</td>
+                                    <td className="text-center px-4 py-3">{loanDetails.customerEmail}</td>
+                                    <td className="text-center qpx-4 py-3">{loanDetails.customer.phoneNumber ? ((loanDetails.customer.phoneNumber).replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')) : "N/A"}</td>
+                                    <td className="text-center px-4 py-3">{loanDetails.customer.bankName ? loanDetails.customer.bankName : "N/A"}</td>
+                                    <td className="text-center px-4 py-3">{loanDetails.customer.bankAccountNumber? loanDetails.customer.bankAccountNumber : "N/A"}</td>
+                                    <td className="text-center px-4 py-3">{loanDetails.customer.bankRoutingNumber ? loanDetails.customer.bankRoutingNumber : "N/A"}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="d-flex justify-content-end align-items-center p-4">
+                        <button className="btn btn-primary " onClick={() => window.history.back()}>Back</button>
+                    </div>
+                    {/* Add any additional content here */}
+                </div>  
             );  
         }
 };
