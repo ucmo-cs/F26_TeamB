@@ -20,7 +20,7 @@ export default function AdminLayout() {
                         <NavLink to="/admin" end className="nav-link">Dashboard</NavLink>
                         <NavLink to="/admin/create-loan" className="nav-link">Create New Loan</NavLink>
                     </Nav>
-                    <p className="text-white mb-0 me-3">{user?.firstName|| 'Admin'}, <span className="text-capitalize"> {user?.role|| ''}</span></p>
+                    <p className="text-white mb-0 me-3">{user?.firstName|| 'Admin'}, <span className="text-tertiary text-capitalize"> {user?.role|| ''}</span></p>
                     <Button variant="outline-secondary" size="sm" onClick={handleLogout}>Logout</Button>
                 </Container>
             </Navbar>

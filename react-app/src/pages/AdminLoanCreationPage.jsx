@@ -11,13 +11,38 @@ TODO:
     • When the admin creates a new loan, a customer account should be automatically generated and the customer’s account information should be automatically emailed to the provided address. 
 */
 import { useState } from "react";
-import { VerticallyCenteredModal } from "../components/BootStrapComponents";
+import { VerticallyCenteredModal,  } from "../components/BootStrapComponents";
 export default function AdminLoanCreationPage() {
     const [showSuccesModal, setShowSuccessModal] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+    const [touchedFields, setTouchedFields] = useState({});
+    const [invalidFields, setInvalidFields] = useState({});
 
+    const validateField = (event) => {
+        const { name, validity } = event.currentTarget;
+        setTouchedFields((fields) => ({ ...fields, [name]: true }));
+        setInvalidFields((fields) => ({ ...fields, [name]: !validity.valid }));
+    };
+
+    const fieldClassName = (name) =>
+        `form-control${(submitted || touchedFields[name]) && invalidFields[name] ? " is-invalid" : ""}`;
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setSubmitted(true);
+
+        const validity = {};
+        Array.from(event.currentTarget.elements).forEach((element) => {
+            if (element.name) {
+                validity[element.name] = !element.validity.valid;
+            }
+        });
+        setInvalidFields(validity);
+
+        if (!event.currentTarget.checkValidity()) {
+            return;
+        }
+
         const formData = new FormData(event.target);
         const loanData = { // send this to backend to create new loan and send email to customer.
             customerFirstName: formData.get('firstName'),
@@ -48,6 +73,19 @@ export default function AdminLoanCreationPage() {
         }
     };
 
+    const setToday = () => {
+        const today = new Date();
+        const localDate = [
+                today.getFullYear(),
+                String(today.getMonth() + 1).padStart(2, "0"),
+                String(today.getDate()).padStart(2, "0"),
+            ].join("-");
+        
+        document.getElementById("loanDate").value = localDate;
+        setTouchedFields((fields) => ({ ...fields, loanDate: true }));
+        setInvalidFields((fields) => ({ ...fields, loanDate: false }));
+    };
+
 
     
     return (
@@ -58,58 +96,68 @@ export default function AdminLoanCreationPage() {
             <div className="card shadow-sm">
                 <div className="card-body p-4">
                 <form onSubmit={handleSubmit}>
-                    <h2 className="h6 text-uppercase text-black mb-3">Customer Information</h2>
-
+                    <h2 className="h6 text-capitalize text-black mb-3">Customer Information</h2>
+                    
                     <div className="row mb-3 align-items-center">
-                    <label htmlFor="firstName" className="col-sm-4 col-form-label">First name</label>
-                    <div className="col-sm-8">
-                        <input type="text" className="form-control" id="firstName" name="firstName" required />
-                    </div>
-                    </div>
-
-                    <div className="row mb-3 align-items-center">
-                    <label htmlFor="lastName" className="col-sm-4 col-form-label">Last name</label>
-                    <div className="col-sm-8">
-                        <input type="text" className="form-control" id="lastName" name="lastName" required />
-                    </div>
-                    </div>
-
-                    <div className="row mb-3 align-items-center">
-                    <label htmlFor="email" className="col-sm-4 col-form-label">Email</label>
-                    <div className="col-sm-8">
-                        <input type="email" className="form-control" id="email" name="email" required />
-                    </div>
-                    </div>
-
-                    <div className="row mb-4 align-items-center">
-                    <label htmlFor="phoneNumber" className="col-sm-4 col-form-label">Phone number</label>
-                    <div className="col-sm-8 d-flex align-items-center">
-                        <input type="tel" className="form-control" id="phoneNumberPt1" name="phoneNumberPt1" min="3" max="3"required />
-                        <p className="align-self-center mb-0"> - </p>
-                        <input type="tel" className="form-control" id="phoneNumberPt2" name="phoneNumberPt2" min="3"max="3" required/>
-                        <p className="align-self-center mb-0"> - </p>
-                        <input type="tel" className="form-control" id="phoneNumberPt3" name="phoneNumberPt3" min="4" max="4" required/>
-                    </div>
-                    </div>
-
-                    <hr className="my-4" />
-                    <h2 className="h6 text-uppercase font-weight-bold text-main mb-3">Loan Information</h2>
-
-                    <div className="row mb-3 align-items-center">
-                        <label htmlFor="loanDate" className="col-sm-4 col-form-label">Loan Orgin Date</label>
-                        <div className="col-sm-8 d-flex align-items-center">
-                            <input type="date" className="form-control" id="loanDate" name="loanDate" required />
-                            <button type="button" className="flex justify-content-center align-items-center btn btn-outline-black p-1 mt-1" 
-                                onClick={() => document.getElementById('loanDate').value = new Date().toISOString().split('T')[0]}>Today</button>
+                        <label htmlFor="firstName" className="col-sm-4 col-form-label">First name</label>
+                        <div className="col-sm-8">
+                            <input type="text" className={fieldClassName("firstName")} id="firstName" name="firstName" minLength="1" maxLength="50" pattern="^[a-zA-Z]{1,50}$" onBlur={validateField} onChange={validateField} required />
+                            <div className="invalid-feedback">Only use 1-50 letters for the first name.</div>
                         </div>
                     </div>
 
                     <div className="row mb-3 align-items-center">
-                    <label htmlFor="originalAmount" className="col-sm-4 col-form-label">Original amount</label>
+                        <label htmlFor="lastName" className="col-sm-4 col-form-label">Last name</label>
+                        <div className="col-sm-8">
+                            <input type="text" className={fieldClassName("lastName")} id="lastName" name="lastName" minLength="1" maxLength="50" pattern="^[a-zA-Z]{1,50}$" onBlur={validateField} onChange={validateField} required />
+                            <div className="invalid-feedback">Only use 1-50 letters for the last name.</div>
+                        </div>
+                    </div>
+
+                    <div className="row mb-3 align-items-center">
+                        <label htmlFor="email" className="col-sm-4 col-form-label">Email</label>
+                        <div className="col-sm-8">
+                            <input type="email" className={fieldClassName("email")} id="email" name="email" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" onBlur={validateField} onChange={validateField} required />
+                            <div className="invalid-feedback">Enter a valid email address.</div>
+                        </div>
+                    </div>
+
+                    <div className="row mb-4 align-items-center">
+                        <label htmlFor="phoneNumber" className="col-sm-4 col-form-label">Phone number</label>
+                        <div className="col-sm-8 d-flex align-items-center">
+                            <input type="tel" className={fieldClassName("phoneNumberPt1")} id="phoneNumberPt1" name="phoneNumberPt1" minLength="3" maxLength="3" pattern="^\d{3}$" onBlur={validateField} onChange={validateField} required />
+                            <p className="align-self-center mb-0"> - </p>
+                            <input type="tel" className={fieldClassName("phoneNumberPt2")} id="phoneNumberPt2" name="phoneNumberPt2" minLength="3" maxLength="3" pattern="^\d{3}$" onBlur={validateField} onChange={validateField} required/>
+                            <p className="align-self-center mb-0"> - </p>
+                            <input type="tel" className={fieldClassName("phoneNumberPt3")} id="phoneNumberPt3" name="phoneNumberPt3" minLength="4" maxLength="4" pattern="^\d{4}$" onBlur={validateField} onChange={validateField} required/>
+                        </div>
+                        <div className="invalid-feedback d-block">
+                            {["phoneNumberPt1", "phoneNumberPt2", "phoneNumberPt3"].some((name) => (submitted || touchedFields[name]) && invalidFields[name])
+                                ? "Enter a phone number in the format 000-000-0000."
+                                : ""}
+                        </div>
+                    </div>
+
+                    <hr className="my-4" />
+                    <h2 className="h6 text-capitalize font-weight-bold text-main mb-3">Loan Information</h2>
+
+                    <div className="row mb-3 align-items-center">
+                        <label htmlFor="loanDate" className="col-sm-4 col-form-label">Loan Origin Date</label>
+                        <div className="col-sm-8 d-flex align-items-center">
+                            <input type="date" className={fieldClassName("loanDate")} id="loanDate" name="loanDate" onBlur={validateField} onChange={validateField} required />
+                            <button type="button" className="flex justify-content-center align-items-center btn btn-outline-secondary text-black p-1 m-1" 
+                                onClick={setToday}>Today</button>
+                            <div className="invalid-feedback">Select a valid loan origin date.</div>
+                        </div>
+                    </div>
+
+                    <div className="row mb-3 align-items-center">
+                    <label htmlFor="originalAmount" className="col-sm-4 col-form-label">Principal</label>
                     <div className="col-sm-8">
                         <div className="input-group">
                             <span className="input-group-text">$</span>
-                            <input type="number" className="form-control" id="originalAmount" name="originalAmount" min="0" pattern="^\d+(\.\d{2})?$"required />
+                            <input type="number" className={fieldClassName("originalAmount")} id="originalAmount" name="originalAmount" min="0" step="0.01" onBlur={validateField} onChange={validateField} required />
+                            <div className="invalid-feedback">Enter an amount with up to two decimal places.</div>
                         </div>
                     </div>
                     </div>
@@ -118,8 +166,9 @@ export default function AdminLoanCreationPage() {
                     <label htmlFor="interestRate" className="col-sm-4 col-form-label">Interest rate</label>
                     <div className="col-sm-8">
                         <div className="input-group">
-                        <input type="number" className="form-control" id="interestRate" name="interestRate" step="0.01" required />
+                        <input type="number" className={fieldClassName("interestRate")} id="interestRate" name="interestRate" min="0" step="0.01" onBlur={validateField} onChange={validateField} required />
                         <span className="input-group-text">%</span>
+                        <div className="invalid-feedback">Enter a rate with up to two decimal places.</div>
                         </div>
                     </div>
                     </div>
