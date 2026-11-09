@@ -1,5 +1,6 @@
 import { CustomerNavBar } from '../components/CustomerNavBar';
 import { useState, useEffect } from 'react';
+import { EditScheduledPaymentComponent } from '../components/EditScheduledPaymentComponent';
 import { useAuth } from '../contexts/AuthContext';
 import { CustomerLoanInfoContext } from '../contexts/CustomerLoanInfoContext';
 import { LoanComponent } from '../components/LoanComponent';
@@ -46,7 +47,11 @@ export function CustomerSchedulePaymentPage(){
         <>
             <CustomerLoanInfoContext.Provider value = {{loanInfo, setLoanInfo, editMode, setEditMode}}>
                 <CustomerNavBar/>
-                <SchedulePaymentComponent/>
+                {editMode ? 
+                    <EditScheduledPaymentComponent/>
+                    :
+                    <SchedulePaymentComponent/>
+                }
             </CustomerLoanInfoContext.Provider>
         </>
     )
