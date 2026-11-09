@@ -74,8 +74,8 @@ export default function AdminPage() {
 		else{
 			return (	
 			<div className="flex text-center content-center align-middle bg-light p-5 rounded">
-				<h1>Welcome, Admin</h1>
-				<p>Table of all unpaid loans</p>
+				{/* <h1>Welcome, Admin</h1> */}
+				<p className="loan-details-eyebrow h4 mb-3">Table of all unpaid loans</p>
 				<LoanTable loans={loanArray}/>
 			</div>
 		);

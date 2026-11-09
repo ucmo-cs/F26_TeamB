@@ -16,7 +16,18 @@ TODO:
 // admin page for a specific loan, routed here by clicking on specific loan in table on AdminPage.jsx. 
 import { useState, useEffect} from "react";
 import { useParams } from "react-router-dom";
+import "../App.css";
 
+const currency = (value) => Number(value ?? 0).toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+});
+
+const formatDate = (value) => {
+    if (!value) return "N/A";
+    const [year, month, day] = value.split("-");
+    return `${month}/${day}/${year}`;
+};
 
 export default function AdminDetailedLoanPage() {
         const [loanDetails, setLoanDetails] = useState(null);
@@ -33,7 +44,7 @@ export default function AdminDetailedLoanPage() {
                 const fetchLoanDetails = async () => {
                         try {
                             setLoading(true);
-                            const response = await fetch(`http://localhost:8081/api/loans/${loanId}`); // Adjust the URL to backend endpoint
+                            const response = await fetch(`http://localhost:8081/api/loans/${loanId}`);
                             if (!response.ok) {
                                     throw new Error('Failed to load loan details.');
                             }
@@ -79,73 +90,104 @@ export default function AdminDetailedLoanPage() {
             return <div className="text-center content-center align-center">No loan details found.</div>;
         } 
         else {
-            return (
-                <div className="container py-5">
-                    <div className="table-responsive rounded border bg-light shadow-sm mt-4">
-                            <h3 className="px-4 py-3 text-nowrap"> Loan Details</h3>
-                            <table className="table table-hover table-responsive p-4">
-                                <thead>
-                                    <tr>
-                                        <th scope="col" className="px-4 py-3 text-nowrap">Loan Origination Date</th>
-                                        <th scope="col" className="px-4 py-3 text-nowrap">Loan Principal Amount</th>
-                                        <th scope="col" className="px-4 py-3 text-nowrap">Interest Rate</th>
-                                        <th scope="col" className="px-4 py-3 text-nowrap">Remaining Balance</th>
-                                        <th scope="col" className="px-4 py-3 text-nowrap">Scheduled Payment Amount</th>
-                                        <th scope="col" className="px-4 py-3 text-nowrap">Calculated Pay-off Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>       
-                                        <td className=" text-center px-4 py-3">{(() => {
-                                            if (!loanDetails.loanDate) return '';
-                                            const [year, month, day] = loanDetails.loanDate.split('-');
-                                            return `${month}/${day}/${year}`;
-                                        })()}</td>
-                                        <td className="text-center px-4 py-3">{loanDetails.originalAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
-                                        <td className="text-center px-4 py-3">{loanDetails.interestRate.toFixed(2)}%</td>
-                                        <td className="text-center px-4 py-3">{loanDetails.remainingBalance.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
+            const originalAmount = Number(loanDetails.originalAmount ?? 0);
+            const remainingBalance = Number(loanDetails.remainingBalance ?? 0);
+            const paidAmount = Math.max(0, originalAmount - remainingBalance);
+            const paidPercent = originalAmount > 0
+                ? Math.min(100, Math.max(0, (paidAmount / originalAmount) * 100))
+                : 0;
+            const customer = loanDetails.customer ?? {};
 
-                                        <td className="text-center px-4 py-3">{loanDetails.scheduledPaymentAmount? ((loanDetails.scheduledPaymentAmount).toLocaleString('en-US', { style: 'currency', currency: 'USD' })) : "N/A"}</td>
-                                        <td className="text-center px-4 py-3">{loanDetails.loanEndDate ? (() => {
-                                            if (!loanDetails.loanEndDate) return '';
-                                            const [year, month, day] = loanDetails.loanEndDate.split('-');
-                                            return `${month}/${day}/${year}`;
-                                        }
-                                        )() : 'N/A'}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+            return (
+                <main className="loan-details-page py-4">
+            <div className="mb-4">
+                <p className="loan-details-eyebrow mb-1">Loan #{loanId}</p>
+                <h1 className="h2 mb-0">Loan overview</h1>
+            </div>
+
+            <div className="row g-4">
+                <section className="col-12 col-xl-7">
+                    <div className="loan-details-card h-100">
+                        <div className="loan-details-card-header">
+                            <div>
+                                <p className="loan-details-eyebrow mb-1">Loan summary</p>
+                                <h2 className="h4 mb-0">Loan details</h2>
+                            </div>
+                            {/* <span className="badge rounded-pill text-bg-success">Active</span> */}
+                        </div>
+                        <dl className="loan-details-grid mb-0">
+                            <div><dt>Origination date</dt><dd>{formatDate(loanDetails.loanDate)}</dd></div>
+                            <div><dt>Original principal</dt><dd>{currency(originalAmount)}</dd></div>
+                            <div><dt>Interest rate</dt><dd>{Number(loanDetails.interestRate ?? 0).toFixed(2)}%</dd></div>
+                            <div><dt>Remaining balance</dt><dd>{currency(remainingBalance)}</dd></div>
+                            <div><dt>Scheduled payment</dt><dd>{loanDetails.scheduledPaymentAmount ? currency(loanDetails.scheduledPaymentAmount) : "N/A"}</dd></div>
+                            <div><dt>Payment frequency</dt><dd>{loanDetails.paymentFrequency ?? "N/A"}</dd></div>
+                            <div><dt>Calculated payoff date</dt><dd>{formatDate(loanDetails.loanEndDate)}</dd></div>
+                        </dl>
                     </div>
-                    <div className="table-responsive rounded border bg-light shadow-sm">
-                        <h3 className="px-4 py-3 text-nowrap">Customer Details</h3>
-                        <table className="table  table-hover table-responsive p-4">
-                            <thead>
-                                <tr >
-                                    <th scope="col" className="px-4 py-3 text-nowrap">Customer Name</th>
-                                    <th scope="col" className="px-4 py-3 text-nowrap">Customer Email</th>
-                                    <th scope="col" className="px-4 py-3 text-nowrap">Customer Phone</th>
-                                    <th scope="col" className="px-4 py-3 text-nowrap">Bank Name</th>
-                                    <th scope="col" className="px-4 py-3 text-nowrap">Bank Account Number</th>
-                                    <th scope="col" className="px-4 py-3 text-nowrap">Bank Routing Number</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td className="text-center px-4 py-3">{loanDetails.customerFirstName} {loanDetails.customerLastName}</td>
-                                    <td className="text-center px-4 py-3">{loanDetails.customerEmail}</td>
-                                    <td className="text-center qpx-4 py-3">{loanDetails.customer.phoneNumber ? ((loanDetails.customer.phoneNumber).replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')) : "N/A"}</td>
-                                    <td className="text-center px-4 py-3">{loanDetails.customer.bankName ? loanDetails.customer.bankName : "N/A"}</td>
-                                    <td className="text-center px-4 py-3">{loanDetails.customer.bankAccountNumber? loanDetails.customer.bankAccountNumber : "N/A"}</td>
-                                    <td className="text-center px-4 py-3">{loanDetails.customer.bankRoutingNumber ? loanDetails.customer.bankRoutingNumber : "N/A"}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                </section>
+
+                <section className="col-12 col-xl-5">
+                    <div className="loan-details-card h-100">
+                        <div className="loan-details-card-header">
+                            <div>
+                                <p className="loan-details-eyebrow mb-1">Account holder</p>
+                                <h2 className="h4 mb-0">Customer details</h2>
+                            </div>
+                        </div>
+                        <dl className="loan-details-grid loan-customer-grid mb-0">
+                            <div><dt>Name</dt><dd>{loanDetails.customerFirstName} {loanDetails.customerLastName}</dd></div>
+                            <div><dt>Email</dt><dd className="text-break">{loanDetails.customerEmail}</dd></div>
+                            <div><dt>Phone</dt><dd>{customer.phoneNumber ? customer.phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3") : "N/A"}</dd></div>
+                            <div><dt>Bank</dt><dd>{customer.bankName || "N/A"}</dd></div>
+                            <div><dt>Account number</dt><dd>{customer.bankAccountNumber || "N/A"}</dd></div>
+                            <div><dt>Routing number</dt><dd>{customer.bankRoutingNumber || "N/A"}</dd></div>
+                        </dl>
                     </div>
-                    <div className="d-flex justify-content-end align-items-center p-4">
-                        <button className="btn btn-primary " onClick={() => window.history.back()}>Back</button>
+                </section>
+            </div>
+
+            <section className="loan-details-card payment-history-card mt-4">
+                <div className="loan-details-card-header">
+                    <div>
+                        <p className="loan-details-eyebrow mb-1">Payment history</p>
+                        <h2 className="h4 mb-1">Progress toward payoff</h2>
+                        <p className="text-muted mb-0">Based on the current loan balance and scheduled payment plan.</p>
                     </div>
-                    {/* Add any additional content here */}
-                </div>  
-            );  
+                    <strong className="payment-percent">{paidPercent.toFixed(0)}% paid</strong>
+                </div>
+
+                <div className="payment-progress" aria-label={`${paidPercent.toFixed(0)} percent of the principal paid`}>
+                    <div className="payment-progress-bar" style={{ width: `${paidPercent}%` }} />
+                </div>
+                <div className="payment-progress-labels">
+                    <span>{currency(paidAmount)} paid</span>
+                    <span>{currency(remainingBalance)} remaining</span>
+                </div>
+
+                <div className="payment-timeline mt-4">
+                    <div className="payment-timeline-step complete">
+                        <span className="payment-timeline-dot" />
+                        <strong>Loan originated</strong>
+                        <span>{formatDate(loanDetails.loanDate)}</span>
+                    </div>
+                    <div className="payment-timeline-step current">
+                        <span className="payment-timeline-dot" />
+                        <strong>Current balance</strong>
+                        <span>{currency(remainingBalance)} outstanding</span>
+                    </div>
+                    <div className="payment-timeline-step">
+                        <span className="payment-timeline-dot" />
+                        <strong>Projected payoff</strong>
+                        <span>{formatDate(loanDetails.loanEndDate)}</span>
+                    </div>
+                </div>
+            </section>
+
+            <div className="d-flex justify-content-end mt-4">
+                <button className="btn btn-primary" onClick={() => window.history.back()}>Back</button>
+            </div>
+                </main>
+            );
         }
 };
