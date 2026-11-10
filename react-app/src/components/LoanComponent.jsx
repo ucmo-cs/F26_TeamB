@@ -17,6 +17,10 @@ o A calculated pay-off date if automatic payments have been set up.
 o A minimum monthly payment, calculated using the Standard Amortization Formula.
 */
 
+const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+};
 
 const toCurrency = (value) =>
     value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
@@ -90,7 +94,7 @@ export function LoanComponent() {
                 <ListGroup variant="flush">
                     <DetailRow
                         label="Date Taken Out"
-                        value={customerLoanInfo ? customerLoanInfo.loanDate : '-'}
+                        value={customerLoanInfo ? formatDate(customerLoanInfo.loanDate) : '-'}
                     />
                     <DetailRow
                         label="Original Amount"
@@ -102,7 +106,7 @@ export function LoanComponent() {
                     />
                     <DetailRow
                         label="Pay-off Date"
-                        value={customerLoanInfo ? customerLoanInfo.loanEndDate : '-'}
+                        value={customerLoanInfo ? formatDate(customerLoanInfo.loanEndDate) : '-'}
                     />
                     <DetailRow
                         label="Minimum Monthly Payment"

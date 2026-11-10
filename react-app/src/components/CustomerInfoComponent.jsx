@@ -52,6 +52,11 @@ const getInitials = (customerInfo) => {
     const last = customerInfo.lastName?.[0] ?? '';
     return (first + last).toUpperCase() || '?';
 };
+
+const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+};
  
 export function CustomerInfoComponent() {
  
@@ -118,7 +123,7 @@ export function CustomerInfoComponent() {
                                 <InfoRow label="Account number" value={customerInfo?.bankAccountNumber} />
                                 <InfoRow
                                     label="Calculated pay-off date"
-                                    value={customerLoanInfo?.loanEndDate}
+                                    value={customerLoanInfo ? formatDate(customerLoanInfo.loanEndDate) : '-'}
                                 />
                             </ListGroup>
                         </Card.Body>
