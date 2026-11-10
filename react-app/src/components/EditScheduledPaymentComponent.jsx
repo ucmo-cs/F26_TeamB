@@ -126,7 +126,6 @@ export function EditScheduledPaymentComponent() {
                 <Card.Body className="px-4 py-4">
                     <div className="mb-3">
                         <h1 className="h3 mb-1">Edit payment schedule</h1>
-                        <div className="text-muted small">Choose how often and how much you pay.</div>
                     </div>
 
                     {error && (
@@ -152,11 +151,6 @@ export function EditScheduledPaymentComponent() {
                                 ))}
                             </ToggleButtonGroup>
                         </div>
-                        <Form.Text className="text-muted">
-                            {activeFrequency
-                                ? `${activeFrequency.hint} ${activeFrequency.perYear} payments a year.`
-                                : 'Select a frequency.'}
-                        </Form.Text>
                     </Form.Group>
 
                     <Form.Group className="mb-4" controlId="scheduledPaymentAmount">
