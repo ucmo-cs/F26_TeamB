@@ -29,18 +29,9 @@ function monthlyPayment(originalAmount, paidAmount, endDate, interestRatePercent
 
   const payment = r === 0
     ? principal / periods
-    : (principal * r) / (1 - Math.pow(1 + r, -periods));
+    : (principal * r * Math.pow(1 + r, periods)) / (Math.pow(1 + r, periods) - 1);
 
   return Math.round(payment * 100) / 100;
-}
-
-function estimateMinPayment(paymentFrequency, scheduledPaymentAmount, minimum){
-    if(!paymentFrequency || scheduledPaymentAmount == null) return null;
-    const frequency = FREQUENCIES.find(f => f.value === paymentFrequency);
-    if(!frequency) return null;
-    const perYear = frequency.perYear;
-    const estimated = scheduledPaymentAmount * perYear;
-    return minimum != null ? Math.max(estimated - minimum, 0) : null;
 }
 
 export function EditScheduledPaymentComponent() {
@@ -51,7 +42,7 @@ export function EditScheduledPaymentComponent() {
     const [error, setError] = useState('');
     const [saving, setSaving] = useState(false);
 
-    const minimum = loanInfo.minimumScheduledPaymentAmount;
+    const [minimum, setMinimum] = useState(loanInfo.minimumScheduledPaymentAmount);
     const parsedAmount = parseFloat(paymentAmount);
     const amountInvalid =
         paymentAmount === '' ||
@@ -61,8 +52,6 @@ export function EditScheduledPaymentComponent() {
 
     const activeFrequency = FREQUENCIES.find((f) => f.value === paymentBy);
     const editScheduledPaymentAPI = `http://localhost:8081/api/loans/${loanInfo.customerId}`;
-
-    localStorage.setItem('loan', JSON.stringify(loanInfo));
 
     async function handleSave() {
         if (!paymentBy) {
@@ -100,6 +89,37 @@ export function EditScheduledPaymentComponent() {
         }
     }
 
+    const handleFrequencyChange = (frequency) => {
+        setPaymentBy(frequency); // this was missing
+        setError('');
+
+        const divisors = { 'Monthly': 1, 'Bi-weekly': 2, 'Weekly': 4 };
+        const divisor = divisors[frequency];
+        if (!divisor) return;
+
+        let monthlyAmount;
+        try {
+            monthlyAmount = monthlyPayment(
+                loanInfo.originalAmount,
+                loanInfo.paidAmount,
+                loanInfo.endDate,
+                loanInfo.interestRatePercent
+            );
+        } catch (err) {
+            console.error(err);
+            return; // keep the current minimum
+        }
+
+        // Round UP to the cent so the minimum is always payable
+        const newMinimum = Math.ceil((monthlyAmount / divisor) * 100) / 100;
+        setMinimum(newMinimum);
+
+        // bump the amount if it's now below the minimum
+        if (!Number.isFinite(parsedAmount) || parsedAmount < newMinimum) {
+            setPaymentAmount(newMinimum.toFixed(2));
+        }
+    };
+
     return (
         <Container className="py-4">
             <Card className="shadow-sm border-0 rounded-4">
@@ -122,7 +142,7 @@ export function EditScheduledPaymentComponent() {
                                 type="radio"
                                 name="paymentFrequency"
                                 value={paymentBy}
-                                onChange={setPaymentBy}
+                                onChange={handleFrequencyChange}
                                 className="w-100"
                             >
                                 {FREQUENCIES.map((f) => (
