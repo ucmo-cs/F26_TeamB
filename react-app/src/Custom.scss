@@ -1,6 +1,7 @@
 $primary: #006747;   
 $secondary: #ece9e9; 
 $custom-blue: #007ea8;
+$tertiary: #D97706;
 
 @import "bootstrap/scss/functions";
 @import "bootstrap/scss/variables";
@@ -8,7 +9,8 @@ $custom-blue: #007ea8;
 $theme-colors: map-merge($theme-colors, (
   "primary": $primary,
   "secondary": $secondary,
-  "info": $custom-blue
+  "info": $custom-blue,
+  "tertiary": $tertiary,
 ));
 
 @import "bootstrap/scss/bootstrap.scss";

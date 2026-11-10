@@ -1,7 +1,7 @@
 // import React from 'react'
 import '../Custom.scss'
 import '../App.css'
-import { Container, Button, Nav, Navbar, Form, Alert } from 'react-bootstrap'; 
+import { Container, Button, Nav, Navbar, Form, Alert, Modal } from 'react-bootstrap'; 
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
@@ -70,55 +70,49 @@ function LoginComponent(){
           setError("Invalid username or password");
         }
       }
-
       catch (error) {setError(error.message)}
-
     }
 
-
-  
-
-  return (
-      <div className="container d-flex align-items-center min-vh-100">
-        <div className="row justify-content-center w-100">
-          <div className="col-12 col-md-8 col-lg-5 col-xl-5">
-  
-            <Form onSubmit={handleSubmit} className="card border-0 shadow rounded-4 p-4 p-md-5">
-  
-              <div className="text-center mb-4">
-                <h2 className="fw-bold mb-1">Log in</h2>
-                <p className="text-body-secondary mb-0">Sign in to manage your loans.</p>
-              </div>
-  
-              {error && (
-              <Alert variant='danger' className="py-2 mb-4" role="alert">
-                <p className="mb-0 small">{error}</p>
-              </Alert>)}
-  
-              <Form.Group className="mb-3" controlId="formUsername">
-                <Form.Label className="fw-semibold small">Username</Form.Label>
-                <Form.Control size="lg" type="text" placeholder="Enter username" autoComplete="username" value={userName} onChange={(e) => setUsername(e.target.value)}/>
-              </Form.Group>
-  
-              <Form.Group className="mb-4" controlId="formBasicPassword">
-                <Form.Label className="fw-semibold small">Password</Form.Label>
-                <Form.Control size="lg" type="password" placeholder="Password" autoComplete="current-password" value = {password} onChange={(e) => setPassword(e.target.value)}/>
-              </Form.Group>
-  
-              <div className="d-grid">
-                <Button variant="primary" size="lg" type="submit" className="fw-semibold">
-                  Log in
-                </Button>
-              </div>
-  
-            </Form>
-  
+    return (
+        <div className="container d-flex align-items-center min-vh-100">
+          <div className="row justify-content-center w-100">
+            <div className="col-12 col-md-8 col-lg-5 col-xl-5">
+    
+              <Form onSubmit={handleSubmit} className="card border-0 shadow rounded-4 p-4 p-md-5">
+    
+                <div className="text-center mb-4">
+                  <h2 className="fw-bold mb-1">Log in</h2>
+                  <p className="text-body-secondary mb-0">Sign in to manage your loans.</p>
+                </div>
+    
+                {error && (
+                <Alert variant='danger' className="py-2 mb-4" role="alert">
+                  <p className="mb-0 small">{error}</p>
+                </Alert>)}
+    
+                <Form.Group className="mb-3" controlId="formUsername">
+                  <Form.Label className="fw-semibold small">Username</Form.Label>
+                  <Form.Control size="lg" type="text" placeholder="Enter username" autoComplete="username" value={userName} onChange={(e) => setUsername(e.target.value)}/>
+                </Form.Group>
+    
+                <Form.Group className="mb-4" controlId="formBasicPassword">
+                  <Form.Label className="fw-semibold small">Password</Form.Label>
+                  <Form.Control size="lg" type="password" placeholder="Password" autoComplete="current-password" value = {password} onChange={(e) => setPassword(e.target.value)}/>
+                </Form.Group>
+    
+                <div className="d-grid">
+                  <Button variant="primary" size="lg" type="submit" className="fw-semibold">
+                    Log in
+                  </Button>
+                </div>
+    
+              </Form>
+    
+            </div>
           </div>
         </div>
-      </div>
-
-  )
-}
+    )
+  }
 
 function LoanTable({ loans }) {
   return (
@@ -144,9 +138,15 @@ function LoanTable({ loans }) {
                     : loan.customerId ? "Customer not found" : "No customer associated"}
                 </Link>
               </td>
-              <td className="px-4 py-3">{loan.loanDate}</td>
-              <td className="px-4 py-3">{loan.originalAmount.toLocaleString({ style: 'currency', currency: 'USD' })}</td>
-              <td className="px-4 py-3">{loan.remainingBalance.toLocaleString({ style: 'currency', currency: 'USD' })}</td>
+
+              <td className="px-4 py-3">  
+                {(() => {
+                          if (!loan.loanDate) return '';
+                          const [year, month, day] = loan.loanDate.split('-');
+                          return `${month}/${day}/${year}`;
+                        })()}</td> {/* format for better readability  MM/DD/YYYY*/}
+              <td className="px-4 py-3">${loan.originalAmount.toLocaleString({ style: 'currency', currency: 'USD' })}</td>
+              <td className="px-4 py-3">${loan.remainingBalance.toLocaleString({ style: 'currency', currency: 'USD' })}</td>
               <td className="px-4 py-3">{loan.interestRate}%</td>
             </tr>
           ))}
@@ -157,4 +157,33 @@ function LoanTable({ loans }) {
 }
 
 
-export {NaviBar, LoginComponent, LoanTable};
+  function VerticallyCenteredModal({ show, onHide }) {
+    return (
+      <Modal 
+        show={show} 
+        onHide={onHide}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Loan Created Successfully
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {/* <h4>Centered Modal</h4> */}
+          <p>
+            Loan creation successful and the customer's account information has been sent to their email.
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={onHide}>Close</Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
+
+
+
+export {NaviBar, LoginComponent, LoanTable, VerticallyCenteredModal};
