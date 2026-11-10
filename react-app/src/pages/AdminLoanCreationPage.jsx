@@ -156,8 +156,8 @@ export default function AdminLoanCreationPage() {
                     <div className="col-sm-8">
                         <div className="input-group">
                             <span className="input-group-text">$</span>
-                            <input type="number" className={fieldClassName("originalAmount")} id="originalAmount" name="originalAmount" min="0" step="0.01" onBlur={validateField} onChange={validateField} required />
-                            <div className="invalid-feedback">Enter an amount with up to two decimal places.</div>
+                            <input type="number" className={fieldClassName("originalAmount")} id="originalAmount" name="originalAmount" min="1" step="1" onBlur={validateField} onChange={validateField} required />
+                            <div className="invalid-feedback">Enter a whole number greater than 0.</div>
                         </div>
                     </div>
                     </div>

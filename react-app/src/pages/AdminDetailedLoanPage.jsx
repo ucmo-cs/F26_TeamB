@@ -101,7 +101,7 @@ export default function AdminDetailedLoanPage() {
             return (
                 <main className="loan-details-page py-4">
             <div className="mb-4">
-                <p className="loan-details-eyebrow mb-1">Loan #{loanId}</p>
+                {/* <p className="loan-details-eyebrow mb-1">Loan #{loanId}</p> */}
                 <h1 className="h2 mb-0">Loan overview</h1>
             </div>
 
