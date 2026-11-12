@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.domain.Customer;
 import com.example.demo.domain.LogIn;
 import com.example.demo.repository.LogInRepository;
+import com.example.demo.service.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ public class LogInService {
 	private static final SecureRandom RANDOM = new SecureRandom();
 
 	private final LogInRepository logInRepository;
+	private final EmailService emailService;
 
 	@Transactional
 	public LogIn create(LogIn registeredUser){
@@ -28,6 +30,7 @@ public class LogInService {
 
 	@Transactional
 	public LogIn createCustomerCredentials(Customer customer) {
+
 		if (customer.getId() == null
 				|| customer.getFirstName() == null || customer.getFirstName().isBlank()
 				|| customer.getLastName() == null || customer.getLastName().isBlank()) {
@@ -46,6 +49,8 @@ public class LogInService {
 		credentials.setPassword(generatePassword(customer));
 		credentials.setRole("customer");
 		credentials.setCustomerId(customer.getId());
+
+		emailService.sendEmail(customer.getEmail(), "Credentials", "username: " + credentials.getUserName() + "\npassword: " + credentials.getPassword());
 		return logInRepository.save(credentials);
 	}
 
