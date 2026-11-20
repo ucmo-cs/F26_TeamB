@@ -36,7 +36,7 @@ backend/out/
 /backend/.nb-gradle/
 
 ### VS Code ###
-backend/.vscode/
+/backend/.vscode/
 backend/.gradle/8.12.1/fileHashes/fileHashes.lock
 backend/.gradle/8.12.1/fileHashes/fileHashes.bin
 backend/.gradle/8.12.1/fileHashes/fileHashes.lock

@@ -7,18 +7,19 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:5173")
 public class CustomerController {
+    
     private final CustomerService customerService;
 
     //Creates a new customer
     @PostMapping ("/api/customer")
-    public ResponseEntity<Customer>  create(@RequestBody Customer customer) {
+    public ResponseEntity<Customer>  create(@Valid @RequestBody Customer customer) {
         return new ResponseEntity<>(customerService.create(customer), HttpStatus.CREATED);
     }
 

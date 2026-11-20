@@ -30,13 +30,14 @@ TODO:
 */
 
 import { useState, useEffect } from "react";
-import { LoanTable } from "../components/BootStrapComponents";
+import { Link } from "react-router-dom";
 
 // after successful login, admin is routed here.
 export default function AdminPage() {
 		const [loanArray, setLoanArray] = useState([]);
 		const [error, setError] = useState(null);
 		const [loading, setLoading] = useState(true);
+		const [searchTerm, setSearchTerm] = useState('');
 
 		useEffect(() => {
 				// Fetch all loans from the backend API
@@ -62,9 +63,33 @@ export default function AdminPage() {
 					}
 				fetchLoans();
 			},[]); // just run on component mount
-			
 
-			
+			const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+			const filteredLoans = normalizedSearchTerm
+				? loanArray.filter((loan) => {
+					const customerName = `${loan.customerFirstName ?? ''} ${loan.customerLastName ?? ''}`;
+					const loanDate = loan.loanDate
+						? (() => {
+							const [year, month, day] = loan.loanDate.split('-');
+							return `${month}/${day}/${year}`;
+						})()
+						: '';
+					const searchableValues = [
+						customerName,
+						loan.customerEmail,
+						loan.customerPhoneNumber,
+						loanDate,
+						loan.originalAmount,
+						loan.remainingBalance,
+						loan.interestRate,
+					];
+
+					return searchableValues
+						.filter((value) => value !== null && value !== undefined)
+						.some((value) => String(value).toLowerCase().includes(normalizedSearchTerm));
+				})
+				: loanArray;
+
 		if(error){
 			return <div className=" bg-light text-center content-center align-center">Error: {error}</div>;
 		}
@@ -73,10 +98,64 @@ export default function AdminPage() {
 		}
 		else{
 			return (	
-			<div className="flex text-center content-center align-middle bg-light p-5 rounded">
+			<div className="flex text-center content-center align-middle p-5 rounded bg-light shadow-sm">
 				{/* <h1>Welcome, Admin</h1> */}
 				<p className="loan-details-eyebrow h4 mb-3">Table of all unpaid loans</p>
-				<LoanTable loans={loanArray}/>
+				<div className="loan-details h6 mb-3">Click on a loan to view more details</div>
+				<div className="mb-3">
+					<input
+						type="search"
+						name="search"
+						className="form-control"
+						placeholder="Search loans..."
+						aria-label="Search unpaid loans"
+						value={searchTerm}
+						onChange={(event) => setSearchTerm(event.target.value)}
+					/>
+				</div>
+				<div className="table-responsive rounded border bg-white shadow-sm">
+				<table className="table table-striped table-hover align-middle mb-0">
+					<thead className="table-light text-uppercase small text-secondary">
+					<tr>
+						<th scope="col" className="px-4 py-3 text-nowrap">Customer Name</th>
+						<th scope="col" className="px-4 py-3 text-nowrap">Loan Start Date</th>
+						<th scope="col" className="px-4 py-3 text-nowrap">Principal Amount</th>
+						<th scope="col" className="px-4 py-3 text-nowrap">Balance Remaining</th>
+						<th scope="col" className="px-4 py-3 text-nowrap">Interest Rate</th>
+					</tr>
+					</thead>
+					<tbody>
+					{filteredLoans.length === 0 ? (
+						<tr>
+							<td colSpan="5" className="px-4 py-3 text-secondary">
+								No unpaid loans match your search.
+							</td>
+						</tr>
+					) : filteredLoans.map((loan) => (
+						<tr key={loan.id}>
+						<td className="px-4 py-3">
+							<Link to={`/admin/detailed/${loan.id}`} className="fw-medium text-decoration-none">
+							{/* If customer info is not found, display "Customer not found" */}
+							{loan.customerFirstName && loan.customerLastName
+								? `${loan.customerFirstName} ${loan.customerLastName}`
+								: loan.customerId ? "Customer not found" : "No customer associated"}
+							</Link>
+						</td>
+
+						<td className="px-4 py-3">  
+							{(() => {
+									if (!loan.loanDate) return '';
+									const [year, month, day] = loan.loanDate.split('-');
+									return `${month}/${day}/${year}`;
+									})()}</td> {/* format for better readability  MM/DD/YYYY*/}
+						<td className="px-4 py-3">${loan.originalAmount.toLocaleString({ style: 'currency', currency: 'USD' })}</td>
+						<td className="px-4 py-3">${loan.remainingBalance.toLocaleString({ style: 'currency', currency: 'USD' })}</td>
+						<td className="px-4 py-3">{loan.interestRate}%</td>
+						</tr>
+					))}
+					</tbody>
+				</table>
+				</div>
 			</div>
 		);
 	}
