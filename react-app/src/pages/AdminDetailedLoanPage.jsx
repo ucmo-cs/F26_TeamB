@@ -164,7 +164,7 @@ export default function AdminDetailedLoanPage() {
                     <span>{currency(paidAmount)} paid</span>
                     <span>{currency(remainingBalance)} remaining</span>
                 </div>
-
+{/* This is the timeline that shows the loan origination, current balance, and projected payoff date.  I commented it out for now because it might be extraneous for project requirements.
                 <div className="payment-timeline mt-4">
                     <div className="payment-timeline-step complete">
                         <span className="payment-timeline-dot" />
@@ -181,7 +181,7 @@ export default function AdminDetailedLoanPage() {
                         <strong>Projected payoff</strong>
                         <span>{formatDate(loanDetails.loanEndDate)}</span>
                     </div>
-                </div>
+                </div> */}
             </section>
 
             <div className="d-flex justify-content-end mt-4">
