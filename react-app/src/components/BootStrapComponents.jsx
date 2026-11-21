@@ -5,6 +5,7 @@ import { Container, Button, Nav, Navbar, Form, Alert, Modal } from 'react-bootst
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { ForgotPasswordModal } from './ForgotPasswordModal';
 
 function NaviBar() {
   // 2. Return the pre-styled React components
@@ -34,7 +35,8 @@ function LoginComponent(){
 
   const[userName, setUsername] = useState('');  
   const[password, setPassword] = useState('');
-  const[error, setError] = useState('');  
+  const[error, setError] = useState('');
+  const [showModal, setShowModal] = useState(false);  
 
   const LogIn_API = 'http://localhost:8081/api/login';
 
@@ -105,8 +107,15 @@ function LoginComponent(){
                     Log in
                   </Button>
                 </div>
+
+                <div className="d-flex justify-content-center mt-4">
+                  <Link onClick={() => setShowModal(true)} className="small text-decoration-none">
+                    Forgot password?
+                  </Link>
+                </div>
     
               </Form>
+              <ForgotPasswordModal show={showModal} handleClose={() => setShowModal(false)} />
     
             </div>
           </div>
