@@ -13,14 +13,14 @@ const FREQUENCIES = [
     { value: 'Weekly', hint: 'Recurs on the same day of the week every week.', perYear: 52 },
 ];
 
-function monthlyPayment(originalAmount, paidAmount, endDate, interestRatePercent) {
-  const principal = originalAmount - paidAmount;
+function periodicPayment(remainingBalance, endDate, interestRatePercent, paymentsPerYear) {
+  const principal = remainingBalance;
   if (principal <= 0) return 0;
 
   const end = Date.parse(endDate);
   if (Number.isNaN(end)) throw new Error("Invalid end date");
 
-  const n = 12;
+  const n = paymentsPerYear;
   const years = (end - Date.now()) / (1000 * 60 * 60 * 24 * 365.25);
   if (years <= 0) return principal; // already due
 
@@ -31,7 +31,7 @@ function monthlyPayment(originalAmount, paidAmount, endDate, interestRatePercent
     ? principal / periods
     : (principal * r * Math.pow(1 + r, periods)) / (Math.pow(1 + r, periods) - 1);
 
-  return Math.round(payment * 100) / 100;
+  return payment;
 }
 
 export function EditScheduledPaymentComponent() {
@@ -90,33 +90,32 @@ export function EditScheduledPaymentComponent() {
     }
 
     const handleFrequencyChange = (frequency) => {
-        setPaymentBy(frequency); // this was missing
+        setPaymentBy(frequency); 
         setError('');
 
-        const divisors = { 'Monthly': 1, 'Bi-weekly': 2, 'Weekly': 4 };
+        const divisors = { 'Monthly': 12, 'Bi-weekly': 26, 'Weekly': 52 };
         const divisor = divisors[frequency];
         if (!divisor) return;
 
-        let monthlyAmount;
         try {
-            monthlyAmount = monthlyPayment(
-                loanInfo.originalAmount,
-                loanInfo.paidAmount,
-                loanInfo.endDate,
-                loanInfo.interestRatePercent
-            );
+            // Round UP to the cent so the minimum is always payable
+            const newMinimum = Math.ceil(periodicPayment(
+                loanInfo.remainingBalance,
+                loanInfo.loanEndDate,
+                loanInfo.interestRate,
+                divisor
+            ) * 100) / 100;
+
+            setMinimum(newMinimum);
+
+            
+            // bump the amount if it's now below the minimum
+            if (!Number.isFinite(parsedAmount) || parsedAmount < newMinimum) {
+                setPaymentAmount(newMinimum.toFixed(2));
+            }
         } catch (err) {
-            console.error(err);
-            return; // keep the current minimum
-        }
-
-        // Round UP to the cent so the minimum is always payable
-        const newMinimum = Math.ceil((monthlyAmount / divisor) * 100) / 100;
-        setMinimum(newMinimum);
-
-        // bump the amount if it's now below the minimum
-        if (!Number.isFinite(parsedAmount) || parsedAmount < newMinimum) {
-            setPaymentAmount(newMinimum.toFixed(2));
+            console.error('Error calculating minimum payment:', err);
+            setError('Unable to calculate minimum payment. Please try again later.');
         }
     };
 
