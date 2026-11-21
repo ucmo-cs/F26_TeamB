@@ -117,7 +117,7 @@ export default function AdminLoanCreationPage() {
                     <div className="row mb-3 align-items-center">
                         <label htmlFor="email" className="col-sm-4 col-form-label">Email</label>
                         <div className="col-sm-8">
-                            <input type="email" className={fieldClassName("email")} id="email" name="email" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" onBlur={validateField} onChange={validateField} required />
+                            <input type="email" className={fieldClassName("email")} id="email" name="email" pattern="^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$" onBlur={validateField} onChange={validateField} required />
                             <div className="invalid-feedback">Enter a valid email address.</div>
                         </div>
                     </div>
@@ -166,7 +166,7 @@ export default function AdminLoanCreationPage() {
                     <label htmlFor="interestRate" className="col-sm-4 col-form-label">Interest rate</label>
                     <div className="col-sm-8">
                         <div className="input-group">
-                        <input type="number" className={fieldClassName("interestRate")} id="interestRate" name="interestRate" min="0" step="0.01" onBlur={validateField} onChange={validateField} required />
+                        <input type="number" className={fieldClassName("interestRate")} id="interestRate" name="interestRate" min="0" max="100" step="0.01" onBlur={validateField} onChange={validateField} required />
                         <span className="input-group-text">%</span>
                         <div className="invalid-feedback">Enter a rate with up to two decimal places.</div>
                         </div>
