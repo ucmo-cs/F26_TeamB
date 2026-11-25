@@ -5,3 +5,5 @@ React and bootstrap frontend website with a spring boot backend for a loan repay
 1. navigate to the react-app folder and open it in a terminal or IDE make sure you are in that folder before running the next commands
 2. npm install
 3. npm run dev 
+4. Open setupMySQL.sql and run code in SQL workbench. Should get prompt to connect from Intellij backend.
+5. Run intellij backend

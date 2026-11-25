@@ -45,4 +45,11 @@ public class LoanController {
         return loanService.getLoanById(id);
     }
 
+    // GET http://localhost:8081/api/loans/{id}/minimum?paymentFrequency=Monthly
+    // Returns the minimum payment for that frequency (e.g. 1033). Nothing is saved.
+    @GetMapping("/loans/{id}/minimum")
+    public long getMinimumPayment(@PathVariable Long id, @RequestParam String paymentFrequency) {
+        return loanService.getMinimumPayment(id, paymentFrequency);
+    }
+
 }

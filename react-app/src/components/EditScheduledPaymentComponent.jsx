@@ -51,7 +51,7 @@ export function EditScheduledPaymentComponent() {
         (minimum !== undefined && minimum !== null && parsedAmount < minimum);
 
     const activeFrequency = FREQUENCIES.find((f) => f.value === paymentBy);
-    const editScheduledPaymentAPI = `http://localhost:8081/api/loans/${loanInfo.customerId}`;
+    const editScheduledPaymentAPI = `http://localhost:8081/api/loans/${loanInfo.id}`;
 
     async function handleSave() {
         if (!paymentBy) {
@@ -89,7 +89,7 @@ export function EditScheduledPaymentComponent() {
         }
     }
 
-    const handleFrequencyChange = (frequency) => {
+    const handleFrequencyChange = async (frequency) => {
         setPaymentBy(frequency); 
         setError('');
 
@@ -98,13 +98,10 @@ export function EditScheduledPaymentComponent() {
         if (!divisor) return;
 
         try {
-            // Round UP to the cent so the minimum is always payable
-            const newMinimum = Math.ceil(periodicPayment(
-                loanInfo.remainingBalance,
-                loanInfo.loanEndDate,
-                loanInfo.interestRate,
-                divisor
-            ) * 100) / 100;
+            // Ask the backend for this frequency's minimum (nothing is saved here)
+            const response = await fetch(`http://localhost:8081/api/loans/${loanInfo.id}/minimum?paymentFrequency=${frequency}`);
+            if (!response.ok) throw new Error(`Minimum request failed: ${response.status}`);
+            const newMinimum = await response.json();
 
             setMinimum(newMinimum);
 

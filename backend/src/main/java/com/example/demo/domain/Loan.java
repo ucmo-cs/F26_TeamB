@@ -27,7 +27,7 @@ public class Loan {
 
     private LocalDate loanDate;                 // date the loan was taken out
     private LocalDate loanEndDate;              // Date at which loan is completely paid off
-    private int monthsToEndDate = 12;                // Hello
+    private Integer monthsToEndDate;                // Hello
 
     private long originalAmount;                // The original amount of money the loan was.
     private Long remainingBalance;              // amount still owed.

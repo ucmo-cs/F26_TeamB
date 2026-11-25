@@ -22,6 +22,7 @@ public class LoanService {
 
     @Transactional
     public Loan create(Loan loan) {
+        loan.setMonthsToEndDate(checkTerm(loan.getMonthsToEndDate()));
         //Checks to see if the customer already exists. If a customer is not returned a new customer is created.
         Customer customer = customerRepository
                 .findByFirstNameAndLastName(loan.getCustomerFirstName(), loan.getCustomerLastName())
@@ -58,6 +59,20 @@ public class LoanService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    public long getMinimumPayment(Long id, String paymentFrequency) {
+        Loan loan = getLoanById(id);
+        Loan copy = new Loan();
+        copy.setRemainingBalance(loan.getRemainingBalance());
+        copy.setLoanDate(loan.getLoanDate());
+        copy.setInterestRate(loan.getInterestRate());
+        copy.setMonthsToEndDate(loan.getMonthsToEndDate());
+        // Huge planned payment so the calculator's payoff loop ends after one step;
+        // the minimum is worked out before that loop, so it isn't affected.
+        copy.setScheduledPaymentAmount(Long.MAX_VALUE);
+        loanPaymentCalculationService.calculatePayoffDateAndTotal(copy, paymentFrequency);
+        return copy.getMinimumScheduledPaymentAmount();
+    }
+
     //Changes the scheduled payment amount in a loan
     @Transactional
     public Loan update(Long id,Loan updates){
@@ -65,7 +80,9 @@ public class LoanService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         loan.setPaymentFrequency(updates.getPaymentFrequency());
-        if (loan.getMonthsToEndDate() == 0){
+        if (updates.getMonthsToEndDate() != null) {
+            loan.setMonthsToEndDate(checkTerm(updates.getMonthsToEndDate()));
+        } else if (loan.getMonthsToEndDate() == null || loan.getMonthsToEndDate() == 0) {
             loan.setMonthsToEndDate(12);
         }
         if (updates.getScheduledPaymentAmount() != null) {
@@ -79,4 +96,14 @@ public class LoanService {
 
         return loanRepository.save(loan);
     }
+    private int checkTerm(Integer months) {
+        if (months == null || months == 0) {
+            return 12;
+        }
+        if (months < 12 || months > 60) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "monthsToEndDate must be between 12 and 60");
+        }
+        return months;
+    }
+
 }

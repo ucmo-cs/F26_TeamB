@@ -33,6 +33,12 @@ public class LoanPaymentCalculationService {
         // Amoritization formula (partial). 1 Problem. It is not setup for years. Instead of recurring it needs to be total number of payments.
         double periodicInterest = interest / recurring; // This adjusts interest so that payment amount is geared for 1 year.
         paymentAmount = (long) Math.ceil(remainingBalance * ((periodicInterest * Math.pow(1 + periodicInterest, totalPayments)) / (Math.pow(1 + periodicInterest, totalPayments) - 1)));
+        // Past the payoff-by date (loanDate + monthsToEndDate): the whole remaining balance,
+        // plus this period's interest, is due in the next/current payment.
+        boolean pastPayoffDate = LocalDate.now().isAfter(loan.getLoanDate().plusMonths(loan.getMonthsToEndDate()));
+        if (pastPayoffDate) {
+            paymentAmount = remainingBalance + Math.round(remainingBalance * periodicInterest);
+        }
         loan.setMinimumScheduledPaymentAmount(paymentAmount);
 
         if (paymentAmount > loan.getScheduledPaymentAmount()){
@@ -62,6 +68,9 @@ public class LoanPaymentCalculationService {
             remainingBalance += Math.round(remainingBalance * (interest / recurring)); // annual interest so only a twelfth of interest is applied in a month
             remainingBalance -= paymentAmount;
             totalPlusInterest += paymentAmount;
+        }
+        if (pastPayoffDate) {
+            loan.setLoanEndDate(LocalDate.now());   // paid off now (the loop above dates it from the loan start)
         }
     }
 }
