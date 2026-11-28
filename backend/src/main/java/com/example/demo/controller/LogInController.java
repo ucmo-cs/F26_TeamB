@@ -1,11 +1,11 @@
 package com.example.demo.controller;
 
+import com.example.demo.domain.Customer;
 import com.example.demo.domain.LogIn;
 import com.example.demo.service.LogInService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,6 +33,15 @@ public class LogInController {
 	public ResponseEntity<?> addUser(@RequestBody LogIn user){
 
 		return new ResponseEntity<>(logInService.create(user), HttpStatus.CREATED);
+	}
+
+	@PostMapping("/api/login/forget")
+	public ResponseEntity<String> forgotPassword(@RequestBody Customer customer){
+		if (customer == null || customer.getEmail() == null || customer.getEmail().isBlank()) {
+			return ResponseEntity.badRequest().body("Email is required");
+		}
+		logInService.forgotPassword(customer.getEmail());
+		return ResponseEntity.ok("If an account exists for that email, a temporary password has been sent.");
 	}
 
 }

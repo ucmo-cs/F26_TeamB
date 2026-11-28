@@ -2,8 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.domain.Customer;
 import com.example.demo.domain.LogIn;
+import com.example.demo.repository.CustomerRepository;
 import com.example.demo.repository.LogInRepository;
-import com.example.demo.service.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +21,7 @@ public class LogInService {
 	private static final SecureRandom RANDOM = new SecureRandom();
 
 	private final LogInRepository logInRepository;
+	private final CustomerRepository customerRepository;
 	private final EmailService emailService;
 
 	@Transactional
@@ -55,6 +56,21 @@ public class LogInService {
 	}
 
 	@Transactional
+	public LogIn forgotPassword(String email){
+		Customer customer = customerRepository.findByEmailIgnoreCase(email.trim()).orElse(null);
+		if (customer == null) {
+			return null;
+		}
+
+		LogIn credentials = logInRepository.findByCustomerId(customer.getId());
+		String temporaryPassword = generateTemporaryPassword();
+		credentials.setPassword(temporaryPassword);
+		logInRepository.save(credentials);
+		emailService.sendEmail(customer.getEmail(), "Password reset", "Your temporary password is: " + temporaryPassword);
+		return credentials;
+	}
+
+	@Transactional
 	public LogIn getCredentials(String userName, String password){
 		return logInRepository.findByUserNameAndPassword(userName, password);
 	}
@@ -66,15 +82,11 @@ public class LogInService {
 
 		return "" + firstName + lastName + id + "00";
 	}
-	/*
-
-	private String generatePassword() {
+	private String generateTemporaryPassword() {
 		char[] password = new char[12];
 		password[0] = LETTERS.charAt(RANDOM.nextInt(LETTERS.length()));
 		password[1] = NUMBERS.charAt(RANDOM.nextInt(NUMBERS.length()));
 		password[2] = SPECIAL_CHARACTERS.charAt(RANDOM.nextInt(SPECIAL_CHARACTERS.length()));
-
-
 
 		for (int i = 3; i < password.length; i++) {
 			password[i] = PASSWORD_CHARACTERS.charAt(RANDOM.nextInt(PASSWORD_CHARACTERS.length()));
@@ -86,8 +98,6 @@ public class LogInService {
 			password[i] = password[swapIndex];
 			password[swapIndex] = current;
 		}
-
 		return new String(password);
 	}
-	 */
 }
